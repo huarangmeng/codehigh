@@ -1,0 +1,84 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-03-19T08:52:23.000Z
+provider: 
+---
+
+# 新功能开发标准规范
+
+## 1. 可见性原则
+
+**贯穿全模块**：凡不需要外部使用的类/函数/属性，一律标记为 `internal`。
+
+## 2. 新增语言支持
+
+1. 在 `code-high/src/commonMain/kotlin/com/hrm/codehigh/lexer/` 下新建 `XxxLexer.kt`，标记为 `internal`。
+2. 覆盖以下 Token 类型（按语言特性选择）：`KEYWORD`、`STRING`、`NUMBER`、`COMMENT`、`OPERATOR`、`PUNCTUATION`、`IDENTIFIER`、`TYPE`、`FUNCTION`、`ANNOTATION`、`BUILTIN`、`PLAIN`。
+3. 在 `LanguageRegistry.registerDefaults()` 中注册，并添加常用别名（如 `js` → `javascript`）。
+4. 在 `code-high-preview` 的 `LanguageCategory.kt` 中添加预览条目，并在 `SampleCode.kt` 中提供示例代码常量。
+
+## 3. 新增主题
+
+1. 在 `code-high/src/commonMain/kotlin/com/hrm/codehigh/theme/` 下新建 `XxxTheme.kt`，实现 `CodeTheme` 接口，标记为 `public object`。
+2. 为所有 `TokenType` 枚举值提供颜色映射。
+3. 在 `code-high-preview` 的 `ThemeCategory.kt` 中添加对比展示条目。
+
+## 4. 修改渲染组件
+
+- `CodeBlock`、`InlineCode` 保持 `public`，签名变更需向后兼容。
+- `CodeBlock` 是**唯一**对外渲染入口，含 `isStreaming` 参数，默认启用增量解析引擎，无需单独的 `StreamingCodeBlock`。
+- 新增的内部 UI 子组件（`StreamingCursor`、`IncrementalHighlighter`、`AstDiffEngine` 等）一律标记为 `internal`。
+- 在 `code-high-preview` 中验证渲染效果。
+
+## 5. 测试规范
+
+### 5.1 测试文件结构
+```
+code-high/src/commonTest/kotlin/com/hrm/codehigh/
+├── lexer/        # XxxLexerTest.kt
+├── theme/        # CodeThemeTest.kt
+├── parser/       # FenceParserTest.kt
+└── stream/       # IncrementalHighlighterTest.kt
+```
+
+### 5.2 命名规范
+- 测试类名：`FeatureNameTest`
+- 测试方法：`should_expectedBehavior_when_condition`
+
+### 5.3 覆盖率要求
+- 正常路径：验证 Token 类型在标准代码片段下正确识别。
+- 边界条件：空输入、单行、多行、嵌套字符串/注释等。
+- 降级处理：未知语言时渲染层降级为 `PlainTextLexer`，不崩溃。
+- 流式场景：`FenceParser` 处理未闭合围栏时仍返回已有内容，不崩溃。
+
+## 6. 测试执行
+
+提交代码前必须执行测试并确保全部通过（`BUILD SUCCESSFUL`）：
+
+```bash
+./gradlew :code-high:jvmTest   # 模块测试
+./gradlew jvmTest               # 全部测试
+```
+
+## 7. Checklist
+
+**新增语言支持：**
+- [ ] `XxxLexer` 实现完成，标记为 `internal`。
+- [ ] 在 `registerDefaults()` 中注册，并添加常用别名。
+- [ ] 添加了对应的 `XxxLexerTest`，`jvmTest` 全部通过。
+- [ ] `LanguageCategory.kt` 中添加了预览条目，`SampleCode.kt` 中添加了示例代码。
+
+**新增主题：**
+- [ ] `XxxTheme` 实现完成，标记为 `public object`，覆盖所有 `TokenType`。
+- [ ] `ThemeCategory.kt` 中添加了对比展示条目。
+
+**修改渲染组件：**
+- [ ] 新增内部子组件（`StreamingCursor`、`IncrementalHighlighter` 等）标记为 `internal`，公开 API 保持向后兼容。
+- [ ] `CodeBlock` 签名变更时保留 `isStreaming` 参数，向后兼容。
+- [ ] `code-high-preview` 中验证了渲染效果，`jvmTest` 全部通过。
+
+**通用：**
+- [ ] 所有不需要外部使用的类/函数/属性已标记为 `internal`。
+- [ ] `./gradlew jvmTest` 全部通过。
