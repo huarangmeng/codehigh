@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hrm.codehigh.ast.CodeToken
 import com.hrm.codehigh.ast.TokenType
+import com.hrm.codehigh.i18n.Strings
 import com.hrm.codehigh.stream.IncrementalHighlighter
 import com.hrm.codehigh.theme.CodeTheme
 import com.hrm.codehigh.theme.LocalCodeTheme
@@ -135,7 +136,8 @@ fun CodeBlock(
                                     color = theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT).copy(alpha = 0.5f),
                                     fontSize = 13.sp,
                                     fontFamily = FontFamily.Monospace,
-                                    lineHeight = 20.sp
+                                    lineHeight = 20.sp,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.End
                                 ),
                                 modifier = Modifier
                                     .width(40.dp)
@@ -183,7 +185,7 @@ fun CodeBlock(
         // 折叠/展开按钮
         if (isCollapsible) {
             BasicText(
-                text = if (isExpanded) "▲ 收起" else "▼ 展开 (${totalLines - visibleLineCount} 行)",
+                text = if (isExpanded) Strings.collapse() else Strings.expand(totalLines - visibleLineCount),
                 style = TextStyle(
                     color = theme.colorFor(com.hrm.codehigh.ast.TokenType.FUNCTION),
                     fontSize = 12.sp,
@@ -218,7 +220,7 @@ internal fun CopyButton(
     }
 
     BasicText(
-        text = if (copied) "✓ 已复制" else "复制",
+        text = if (copied) "✓ ${Strings.copied()}" else Strings.copy(),
         style = TextStyle(
             color = theme.colorFor(TokenType.FUNCTION).copy(alpha = 0.8f),
             fontSize = 11.sp,
