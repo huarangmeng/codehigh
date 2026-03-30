@@ -1,76 +1,304 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop (JVM).
+# CodeHigh
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg)](https://kotlinlang.org)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.10.0-brightgreen.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![Android API](https://img.shields.io/badge/Android%20API-24%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+A high-performance cross-platform code highlighting library developed based on Kotlin Multiplatform (KMP) and Compose Multiplatform. It supports consistent rendering effects on Android, iOS, Desktop (JVM), and Web (Wasm/JS) platforms.
 
-### Build and Run Android Application
+[中文版本](./README_zh.md)
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## 🌟 Key Features
 
-### Build and Run Desktop (JVM) Application
+- **Multi-platform Consistency**: Uses Compose Multiplatform for consistent code highlighting on Android, iOS, Desktop (JVM), and Web (Wasm/JS).
+- **18+ Programming Languages**: Built-in support for Kotlin, Java, Swift, Python, JavaScript, TypeScript, Go, Rust, C, C++, SQL, JSON, YAML, Bash, XML, HTML, CSS, Markdown, and more.
+- **Incremental Highlighting**: AST-based incremental parsing and highlighting for efficient updates in streaming scenarios (e.g., AI chat, real-time editing).
+- **Rich Themes**: 4 built-in themes including One Dark Pro, GitHub Light, Dracula Pro, and Solarized Light, with custom theme support.
+- **Code Block Components**: Complete code block rendering with line numbers, copy button, language label, collapsible/expandable, and streaming cursor animation.
+- **Markdown Fence Parser**: Built-in parser for Markdown code fence blocks.
+- **Custom Lexer Support**: Extensible lexer API for adding support for additional programming languages.
+- **Token Click Interaction**: Click callback for individual code tokens for interactive features.
+- **Dark/Light Mode**: Automatic theme switching based on system dark/light mode.
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+## � Supported Languages (18+)
 
-### Build and Run Web Application
+<details>
+<summary><b>System Languages</b> — Kotlin, Java, Swift</summary>
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
+- **Kotlin**: keywords, strings (including triple-quoted and template strings), comments, annotations, built-in types, numbers
+- **Java**: keywords, strings, comments, annotations, built-in types, numbers
+- **Swift**: keywords, strings, comments, built-in types, numbers
+</details>
 
-### Build and Run iOS Application
+<details>
+<summary><b>Scripting Languages</b> — Python, JavaScript, TypeScript</summary>
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+- **Python**: keywords, strings (single/double/triple quotes), comments, decorators, built-in functions
+- **JavaScript**: keywords, strings, comments, regular expressions, template literals
+- **TypeScript**: all JavaScript features plus TypeScript-specific syntax (types, interfaces, generics, etc.)
+</details>
 
----
+<details>
+<summary><b>System/Systems Languages</b> — Go, Rust, C, C++</summary>
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+- **Go**: keywords, strings, comments, built-in types
+- **Rust**: keywords, strings, comments, attributes, macros
+- **C/C++**: keywords, strings, comments, preprocessor directives
+</details>
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+<details>
+<summary><b>Data/Configuration Languages</b> — SQL, JSON, YAML</summary>
+
+- **SQL**: keywords, strings, comments, identifiers
+- **JSON**: strings, numbers, booleans, null, objects, arrays
+- **YAML**: keys, values, strings, comments, lists, dictionaries
+</details>
+
+<details>
+<summary><b>Markup/Style Languages</b> — Bash, XML, HTML, CSS, Markdown</summary>
+
+- **Bash/Shell**: keywords, strings, comments, variables, commands
+- **XML/HTML**: tags, attributes, strings, comments, entities
+- **CSS**: selectors, properties, values, comments, at-rules
+- **Markdown**: headers, lists, links, code spans, block quotes, etc.
+</details>
+
+## 🎨 Built-in Themes (4)
+
+| Theme | Type | Description |
+|-------|------|-------------|
+| **OneDarkPro** | Dark | Based on Atom's popular One Dark Pro theme |
+| **GithubLight** | Light | Based on GitHub's code highlighting colors |
+| **DraculaPro** | Dark | Based on the Dracula Pro color scheme |
+| **SolarizedLight** | Light | Based on Ethan Schoonover's Solarized Light |
+
+## 🛠️ Usage
+
+### Basic Code Block
+
+In a Compose Multiplatform project, you can use the `CodeBlock` component directly:
+
+```kotlin
+import com.hrm.codehigh.renderer.CodeBlock
+import com.hrm.codehigh.theme.OneDarkProTheme
+
+@Composable
+fun MyScreen() {
+    CodeBlock(
+        code = """
+            fun main() {
+                println("Hello, CodeHigh!")
+            }
+        """.trimIndent(),
+        language = "kotlin",
+        theme = OneDarkProTheme,
+        showLineNumbers = true,
+        showCopyButton = true
+    )
+}
+```
+
+### Inline Code
+
+For inline code highlighting within text:
+
+```kotlin
+import com.hrm.codehigh.renderer.InlineCode
+
+@Composable
+fun MyText() {
+    InlineCode(
+        text = "val x = 42"
+    )
+}
+```
+
+### Measuring Inline Code Size
+
+When you need to pre-occupy space or adjust layout, use the measurement API to calculate the width and height of inline code:
+
+```kotlin
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.rememberTextMeasurer
+import com.hrm.codehigh.renderer.measureInlineCodeSize
+import com.hrm.codehigh.theme.OneDarkProTheme
+
+@Composable
+fun MeasureExample() {
+    val density = LocalDensity.current
+    val textMeasurer = rememberTextMeasurer()
+    val theme = OneDarkProTheme
+    
+    val size = remember {
+        measureInlineCodeSize(
+            text = "val x = 42",
+            language = "kotlin",
+            theme = theme,
+            density = density,
+            textMeasurer = textMeasurer
+        )
+    }
+    
+    // Use measurement result for layout
+    Box(
+        Modifier
+            .width(size.widthDp(density).dp)
+            .height(size.heightDp(density).dp)
+    ) {
+        // Placeholder or other content
+    }
+}
+```
+
+### Streaming Mode (For AI Chat/Real-time Output)
+
+For streaming scenarios (e.g., AI chatbots), enable the `isStreaming` flag to show a blinking cursor animation at the end:
+
+```kotlin
+import com.hrm.codehigh.renderer.CodeBlock
+
+@Composable
+fun StreamingCode() {
+    var code by remember { mutableStateOf("") }
+    
+    CodeBlock(
+        code = code,
+        language = "python",
+        isStreaming = true // Shows blinking cursor at the end
+    )
+}
+```
+
+### Collapsible Code Blocks
+
+For long code blocks, use `maxVisibleLines` to make them collapsible:
+
+```kotlin
+CodeBlock(
+    code = longCode,
+    language = "java",
+    maxVisibleLines = 20 // Collapse after 20 lines
+)
+```
+
+### Custom Theme
+
+You can create custom themes by implementing the `CodeTheme` interface:
+
+```kotlin
+import androidx.compose.ui.graphics.Color
+import com.hrm.codehigh.ast.TokenType
+import com.hrm.codehigh.theme.CodeTheme
+
+object MyCustomTheme : CodeTheme {
+    override val background = Color(0xFF1E1E1E)
+    override val isDark = true
+    
+    override fun colorFor(type: TokenType): Color {
+        return when (type) {
+            TokenType.KEYWORD -> Color(0xFF569CD6)
+            TokenType.STRING -> Color(0xFFCE9178)
+            TokenType.COMMENT -> Color(0xFF6A9955)
+            TokenType.NUMBER -> Color(0xFFB5CEA8)
+            // ... other token types
+            else -> Color(0xFFD4D4D4)
+        }
+    }
+}
+```
+
+### Using LocalCodeTheme for Global Theming
+
+Use `CompositionLocal` to provide a theme globally:
+
+```kotlin
+import com.hrm.codehigh.theme.LocalCodeTheme
+import com.hrm.codehigh.theme.GithubLightTheme
+
+@Composable
+fun App() {
+    CompositionLocalProvider(LocalCodeTheme provides GithubLightTheme) {
+        // All CodeBlocks in this scope will use GithubLightTheme
+        CodeBlock(code = "...", language = "kotlin")
+    }
+}
+```
+
+### Registering Custom Lexers
+
+You can register custom lexers for additional languages:
+
+```kotlin
+import com.hrm.codehigh.lexer.LanguageRegistry
+import com.hrm.codehigh.lexer.Lexer
+
+// Register your custom lexer
+LanguageRegistry.register("my-language", MyCustomLexer)
+LanguageRegistry.registerAlias("ml", "my-language") // Add alias
+
+// Use it in CodeBlock
+CodeBlock(
+    code = myCode,
+    language = "my-language" // Or "ml" via alias
+)
+```
+
+## 🏗️ Project Structure
+
+- `:codehighlight`: Core SDK module, containing lexers, parser, renderer, themes, and incremental highlighting.
+- `:codehighlight-preview`: Preview components and sample datasets.
+- `:composeApp`: Cross-platform Demo application.
+- `:androidApp`: Android Demo application.
+- `:iosApp`: iOS application entry module.
+
+## 🚀 Quick Start
+
+### Running the Demo App
+
+- **Android**: `./gradlew :androidApp:assembleDebug`
+- **Desktop**: `./gradlew :composeApp:run`
+- **Web (Wasm)**: `./gradlew :composeApp:wasmJsBrowserDevelopmentRun`
+- **iOS**: Open `iosApp/iosApp.xcworkspace` in Xcode to run.
+
+### Running Tests
+
+```bash
+./gradlew test
+```
+
+## 📊 Roadmap & Coverage
+
+For a detailed list of supported features, please refer to: [HIGHLIGHTER_COVERAGE_ANALYSIS.md](./HIGHLIGHTER_COVERAGE_ANALYSIS.md)
+
+## 💡 Recommended
+
+- [LaTeX](https://github.com/huarangmeng/LaTeX) — A Kotlin Multiplatform LaTeX parsing and rendering library by the same author. If you need both code highlighting and LaTeX rendering in your project, check it out!
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+```
+MIT License
+
+Copyright (c) 2026 huarangmeng
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

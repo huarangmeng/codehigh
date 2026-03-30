@@ -45,13 +45,13 @@ internal fun buildLineHighlights(
 
 /**
  * 构建带颜色 Span 的 AnnotatedString。
- * 标记为 internal，仅供渲染层内部使用。
+ * 对外公开，供尺寸测量和渲染使用。
  *
  * @param tokens Token 列表
  * @param theme 代码主题
  * @return 带颜色 Span 的 AnnotatedString
  */
-internal fun buildHighlightedString(
+public fun buildHighlightedString(
     tokens: List<CodeToken>,
     theme: CodeTheme
 ): AnnotatedString {

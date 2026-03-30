@@ -51,9 +51,9 @@ public object LanguageRegistry {
 
     /**
      * 获取词法分析器，未知语言降级为 PlainTextLexer。
-     * internal 方法，供渲染层内部使用。
+     * 对外公开，供渲染层使用。
      */
-    internal fun getOrPlain(lang: String): Lexer {
+    public fun getOrPlain(lang: String): Lexer {
         return get(lang) ?: PlainTextLexer
     }
 
