@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.mavenPublish)
 }
 
 kotlin {
@@ -58,6 +59,42 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral(true)
+
+    signAllPublications()
+
+    coordinates("io.github.huarangmeng", "codehighlight", rootProject.property("VERSION").toString())
+
+    pom {
+        name.set("CodeHigh")
+        description.set("""
+            High-performance cross-platform code highlighting library built with Kotlin Multiplatform and Compose Multiplatform.
+        """.trimIndent())
+        inceptionYear.set("2026")
+        url.set("https://github.com/huarangmeng/codehigh")
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://opensource.org/licenses/MIT")
+                distribution.set("repo")
+            }
+        }
+        developers {
+            developer {
+                id.set("huarangmeng")
+                name.set("huarangmeng")
+                url.set("https://github.com/huarangmeng/")
+            }
+        }
+        scm {
+            url.set("https://github.com/huarangmeng/codehigh")
+            connection.set("scm:git:git://github.com/huarangmeng/codehigh.git")
+            developerConnection.set("scm:git:ssh://git@github.com/huarangmeng/codehigh.git")
         }
     }
 }
