@@ -507,6 +507,137 @@ internal object SampleCode {
         main "${'$'}@"
     """.trimIndent()
 
+    val RUBY = """
+        require "json"
+
+        class User
+          attr_accessor :name, :email
+
+          def initialize(name, email)
+            @name = name
+            @email = email
+          end
+
+          def greet
+            puts "Hello, #{@name}"
+          end
+        end
+    """.trimIndent()
+
+    val PHP = """
+        <?php
+
+        class UserController {
+            public function show(${ '$' }id): void {
+                ${ '$' }user = ["id" => ${ '$' }id, "name" => "Alice"];
+                echo ${ '$' }user["name"];
+            }
+        }
+    """.trimIndent()
+
+    val DART = """
+        import 'package:flutter/material.dart';
+
+        class CounterPage extends StatefulWidget {
+          const CounterPage({super.key});
+
+          @override
+          State<CounterPage> createState() => _CounterPageState();
+        }
+
+        class _CounterPageState extends State<CounterPage> {
+          int count = 0;
+
+          void increment() {
+            setState(() {
+              count += 1;
+            });
+          }
+        }
+    """.trimIndent()
+
+    val SCALA = """
+        case class User(name: String, age: Int)
+
+        trait Greeter {
+          def greet(user: User): String
+        }
+
+        object Main extends App {
+          val user = User("Alice", 30)
+          println(user)
+        }
+    """.trimIndent()
+
+    val R = """
+        library(ggplot2)
+
+        users <- data.frame(
+          name = c("Alice", "Bob"),
+          score = c(95, 88)
+        )
+
+        print(users)
+    """.trimIndent()
+
+    val TOML = """
+        title = "CodeHigh"
+
+        [server]
+        host = "127.0.0.1"
+        port = 8080
+
+        [[plugins]]
+        name = "syntax"
+        enabled = true
+    """.trimIndent()
+
+    val DOCKERFILE = """
+        FROM eclipse-temurin:21-jre
+
+        WORKDIR /app
+        COPY build/libs/app.jar /app/app.jar
+        ENV JAVA_OPTS="-Xms256m -Xmx512m"
+        EXPOSE 8080
+        CMD ["sh", "-c", "java ${'$'}JAVA_OPTS -jar /app/app.jar"]
+    """.trimIndent()
+
+    val LUA = """
+        local User = {}
+        User.__index = User
+
+        function User.new(name)
+          local self = setmetatable({}, User)
+          self.name = name
+          return self
+        end
+
+        print(require("game.config"))
+    """.trimIndent()
+
+    val HASKELL = """
+        module Main where
+
+        data User = User String Int
+
+        greet :: User -> String
+        greet (User name _) = "Hello, " ++ name
+
+        main = putStrLn (greet (User "Alice" 30))
+    """.trimIndent()
+
+    val ELIXIR = """
+        defmodule User do
+          def greet(name) do
+            name
+            |> String.trim()
+            |> IO.puts()
+          end
+        end
+
+        User.greet(" Alice ")
+    """.trimIndent()
+
     val HTML = """
         <!DOCTYPE html>
         <html lang="zh-CN">

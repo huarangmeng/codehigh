@@ -104,6 +104,26 @@ class FenceParserTest {
     }
 
     @Test
+    fun should_detectExtendedLanguages_when_languageSpecificMarkersPresent() {
+        val cases = listOf(
+            "ruby" to "class User\n  attr_accessor :name\n  def greet\n    puts \"hi\"\n  end\nend",
+            "php" to "<?php\nfunction hello(\$name) {\n    echo \$name;\n}",
+            "dart" to "class CounterPage extends StatefulWidget {\n  Widget build(BuildContext context) => Text('ok');\n}",
+            "scala" to "case class User(name: String)\nobject Main extends App",
+            "r" to "library(ggplot2)\nusers <- data.frame(name = c(\"Alice\"))",
+            "toml" to "[server]\nhost = \"127.0.0.1\"\n[[plugins]]\nname = \"syntax\"",
+            "dockerfile" to "FROM eclipse-temurin:21\nWORKDIR /app\nCOPY . .",
+            "lua" to "local function greet(name)\n  print(name)\nend",
+            "haskell" to "module Main where\n\ndata User = User String Int",
+            "elixir" to "defmodule User do\n  def greet(name), do: IO.puts(name)\nend"
+        )
+
+        cases.forEach { (expected, code) ->
+            assertEquals(expected, FenceParser.detectLanguage(code))
+        }
+    }
+
+    @Test
     fun should_returnEmpty_when_unknownCode() {
         val code = "some random text without clear language markers"
         val lang = FenceParser.detectLanguage(code)

@@ -107,11 +107,73 @@ public object FenceParser {
             return "kotlin"
         }
 
+        if (trimmed.contains("<?php") ||
+            trimmed.contains(Regex("\\$\\w+\\s*=")) ||
+            trimmed.contains(Regex("\\becho\\s+['\"]")) ||
+            trimmed.contains(Regex("\\bfunction\\s+\\w+\\s*\\(")) && trimmed.contains("->")) {
+            return "php"
+        }
+
         // Python 特征
-        if (trimmed.contains(Regex("\\bdef\\s+\\w+\\s*\\(")) ||
+        if (trimmed.contains(Regex("\\bdef\\s+\\w+\\s*\\([^)]*\\)\\s*:")) ||
             trimmed.contains(Regex("\\bimport\\s+\\w+")) && trimmed.contains(Regex("\\bprint\\s*\\(")) ||
             trimmed.contains(Regex("^\\s*#!.*python", RegexOption.MULTILINE))) {
             return "python"
+        }
+
+        if (trimmed.contains(Regex("\\bclass\\s+\\w+\\s+extends\\s+(StatelessWidget|StatefulWidget)")) ||
+            trimmed.contains(Regex("\\bWidget\\s+build\\s*\\(")) ||
+            trimmed.contains("setState(") ||
+            trimmed.contains(Regex("\\brequired\\s+this\\."))) {
+            return "dart"
+        }
+
+        if (trimmed.contains(Regex("\\bdefmodule\\s+[A-Z]\\w*")) ||
+            trimmed.contains("|>") ||
+            trimmed.contains("%{") ||
+            trimmed.contains(Regex("\\bIO\\.puts\\s*\\("))) {
+            return "elixir"
+        }
+
+        if (trimmed.contains(Regex("\\bcase\\s+class\\s+\\w+")) ||
+            trimmed.contains(Regex("\\btrait\\s+\\w+")) ||
+            trimmed.contains(Regex("\\bobject\\s+\\w+")) ||
+            trimmed.contains(Regex("\\bimplicit\\b"))) {
+            return "scala"
+        }
+
+        if (trimmed.contains(Regex("\\bdef\\s+\\w+[!?]?")) &&
+            (trimmed.contains(Regex("\\bputs\\b")) || trimmed.contains(Regex("\\battr_accessor\\b")) || trimmed.contains("@"))) {
+            return "ruby"
+        }
+
+        if (trimmed.contains(Regex("\\bfunction\\s*\\(")) ||
+            trimmed.contains(Regex("\\blibrary\\s*\\(")) ||
+            trimmed.contains(Regex("\\bdata\\.frame\\s*\\(")) ||
+            trimmed.contains("<-")) {
+            return "r"
+        }
+
+        if (trimmed.contains(Regex("(?m)^\\s*(FROM|RUN|COPY|CMD|EXPOSE|ENV|WORKDIR|ENTRYPOINT|ARG)\\b", RegexOption.IGNORE_CASE))) {
+            return "dockerfile"
+        }
+
+        if (trimmed.contains(Regex("(?m)^\\s*\\[[^\\]]+\\]\\s*$")) ||
+            trimmed.contains(Regex("(?m)^\\s*\\[\\[[^\\]]+\\]\\]\\s*$"))) {
+            return "toml"
+        }
+
+        if (trimmed.contains(Regex("\\blocal\\s+function\\s+\\w+")) ||
+            trimmed.contains(Regex("\\brequire\\s*\\(?['\"]")) ||
+            trimmed.contains(Regex("(?m)^\\s*--"))) {
+            return "lua"
+        }
+
+        if (trimmed.contains(Regex("\\bmodule\\s+[A-Z]\\w*(\\.[A-Z]\\w*)*\\s+where")) ||
+            trimmed.contains(Regex("\\bdata\\s+[A-Z]\\w*\\s*=")) ||
+            trimmed.contains(Regex("\\binstance\\b")) ||
+            trimmed.contains("::")) {
+            return "haskell"
         }
 
         // JavaScript/TypeScript 特征

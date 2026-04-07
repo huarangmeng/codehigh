@@ -93,6 +93,30 @@ public object LanguageRegistry {
         registerAlias("ts", "typescript")
         registerAlias("tsx", "typescript")
 
+        register("ruby", RubyLexer)
+        registerAlias("rb", "ruby")
+
+        register("php", PhpLexer)
+        registerAlias("phtml", "php")
+        registerAlias("php3", "php")
+        registerAlias("php4", "php")
+        registerAlias("php5", "php")
+
+        register("dart", DartLexer)
+
+        register("scala", ScalaLexer)
+        registerAlias("sc", "scala")
+
+        register("lua", LuaLexer)
+        registerAlias("luau", "lua")
+
+        register("haskell", HaskellLexer)
+        registerAlias("hs", "haskell")
+
+        register("elixir", ElixirLexer)
+        registerAlias("ex", "elixir")
+        registerAlias("exs", "elixir")
+
         // 系统/底层语言
         register("go", GoLexer)
         register("rust", RustLexer)
@@ -108,6 +132,11 @@ public object LanguageRegistry {
         register("json", JsonLexer)
         register("yaml", YamlLexer)
         registerAlias("yml", "yaml")
+        register("r", RLangLexer)
+        registerAlias("rscript", "r")
+        register("toml", TomlLexer)
+        register("dockerfile", DockerfileLexer)
+        registerAlias("docker", "dockerfile")
 
         // 标记/样式语言
         register("bash", BashLexer)

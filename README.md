@@ -12,16 +12,16 @@ A high-performance cross-platform code highlighting library developed based on K
 ## 🌟 Key Features
 
 - **Multi-platform Consistency**: Uses Compose Multiplatform for consistent code highlighting on Android, iOS, Desktop (JVM), and Web (Wasm/JS).
-- **18+ Programming Languages**: Built-in support for Kotlin, Java, Swift, Python, JavaScript, TypeScript, Go, Rust, C, C++, SQL, JSON, YAML, Bash, XML, HTML, CSS, Markdown, and more.
+- **28+ Programming Languages**: Built-in support for Kotlin, Java, Swift, Python, JavaScript, TypeScript, Ruby, PHP, Dart, Scala, Go, Rust, C, C++, R, SQL, JSON, YAML, TOML, Dockerfile, Bash, Lua, Haskell, Elixir, XML, HTML, CSS, Markdown, and more.
 - **Incremental Highlighting**: AST-based incremental parsing and highlighting for efficient updates in streaming scenarios (e.g., AI chat, real-time editing).
 - **Rich Themes**: 4 built-in themes including One Dark Pro, GitHub Light, Dracula Pro, and Solarized Light, with custom theme support.
 - **Code Block Components**: Complete code block rendering with line numbers, copy button, language label, collapsible/expandable, and streaming cursor animation.
 - **Markdown Fence Parser**: Built-in parser for Markdown code fence blocks.
 - **Custom Lexer Support**: Extensible lexer API for adding support for additional programming languages.
 - **Token Click Interaction**: Click callback for individual code tokens for interactive features.
-- **Dark/Light Mode**: Automatic theme switching based on system dark/light mode.
+- **Light/Dark Themes**: Built-in light and dark themes with explicit selection and custom theme support.
 
-## � Supported Languages (18+)
+## 📚 Supported Languages (28+)
 
 <details>
 <summary><b>System Languages</b> — Kotlin, Java, Swift</summary>
@@ -32,11 +32,18 @@ A high-performance cross-platform code highlighting library developed based on K
 </details>
 
 <details>
-<summary><b>Scripting Languages</b> — Python, JavaScript, TypeScript</summary>
+<summary><b>Scripting Languages</b> — Python, JavaScript, TypeScript, Ruby, PHP, Dart, Scala, Lua, Haskell, Elixir</summary>
 
 - **Python**: keywords, strings (single/double/triple quotes), comments, decorators, built-in functions
 - **JavaScript**: keywords, strings, comments, regular expressions, template literals
 - **TypeScript**: all JavaScript features plus TypeScript-specific syntax (types, interfaces, generics, etc.)
+- **Ruby**: keywords, strings, comments, instance variables, and common Rails-oriented built-ins
+- **PHP**: `<?php` tags, keywords, strings, comments, `$variable` tokens, and `->`/`::` operators
+- **Dart**: keywords, strings, annotations, common Flutter types, and `setState`
+- **Scala**: keywords, strings, annotations, `case class`, `trait`, and `object`
+- **Lua**: keywords, strings, comments, `local` variables, and `require`/`print`
+- **Haskell**: keywords, strings, comments, type signatures, and algebraic data types
+- **Elixir**: keywords, strings, pipe operators, module definitions, and common built-in calls
 </details>
 
 <details>
@@ -48,11 +55,14 @@ A high-performance cross-platform code highlighting library developed based on K
 </details>
 
 <details>
-<summary><b>Data/Configuration Languages</b> — SQL, JSON, YAML</summary>
+<summary><b>Data/Configuration Languages</b> — R, SQL, JSON, YAML, TOML, Dockerfile</summary>
 
+- **R**: assignment operators, function definitions, `library`, `data.frame`, and common data analysis built-ins
 - **SQL**: keywords, strings, comments, identifiers
 - **JSON**: strings, numbers, booleans, null, objects, arrays
 - **YAML**: keys, values, strings, comments, lists, dictionaries
+- **TOML**: sections, array sections, key-value pairs, strings, and booleans
+- **Dockerfile**: build instructions, environment variables, strings, and comments
 </details>
 
 <details>

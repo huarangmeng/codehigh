@@ -140,7 +140,53 @@
 - ✅ 泛型语法：`Array<T>`、`Promise<T>`、`Record<K, V>` 等
 - ✅ 装饰器：`@Component`、`@Injectable`、`@Input` 等
 
-**覆盖率**: 3/3 (100%)
+#### Ruby
+- ✅ 关键字：`def`、`class`、`module`、`if`、`unless`、`case`、`begin`、`rescue`、`do`、`end`、`yield`、`super` 等
+- ✅ 字符串：单引号、双引号字符串
+- ✅ 注释：`#` 单行注释、`=begin`/`=end` 块注释
+- ✅ 变量：实例变量 `@name`、类变量 `@@name`、全局变量 `$LOAD_PATH`
+- ✅ 内置调用：`puts`、`require`、`attr_accessor`、`lambda` 等
+
+#### PHP
+- ✅ 关键字：`<?php`、`function`、`class`、`public`、`private`、`echo`、`require`、`namespace`、`trait`、`match` 等
+- ✅ 字符串：单引号、双引号字符串
+- ✅ 注释：`//`、`#` 单行注释，`/* */` 多行注释
+- ✅ 变量：`$variable` 形式变量标识
+- ✅ 运算符：对象访问 `->`、静态访问 `::`、空合并 `??`
+
+#### Dart
+- ✅ 关键字：`class`、`async`、`await`、`late`、`required`、`mixin`、`extension`、`typedef`、`factory` 等
+- ✅ 字符串：单引号、双引号、三引号多行字符串
+- ✅ 注解：`@override` 等
+- ✅ 常用类型：`Widget`、`BuildContext`、`StatefulWidget`、`Future`、`Stream`
+- ✅ Flutter 常见内置调用：`runApp`、`setState`
+
+#### Scala
+- ✅ 关键字：`val`、`var`、`def`、`class`、`object`、`trait`、`case`、`given`、`using`、`implicit`、`match` 等
+- ✅ 字符串：单引号、双引号、三引号字符串
+- ✅ 注解：`@` 前缀注解
+- ✅ 类型与结构：`case class`、`trait`、`object`、类型名自动识别
+
+#### Lua
+- ✅ 关键字：`function`、`local`、`if`、`then`、`elseif`、`end`、`repeat`、`until`、`return` 等
+- ✅ 字符串：单引号、双引号、`[[...]]` 长字符串
+- ✅ 注释：`--` 单行注释、`--[[...]]` 块注释
+- ✅ 常用内置：`require`、`print`、`pairs`、`table`
+
+#### Haskell
+- ✅ 关键字：`module`、`data`、`type`、`class`、`instance`、`where`、`let`、`in`、`case`、`of` 等
+- ✅ 字符串：单引号、双引号字符串
+- ✅ 注释：`--` 单行注释、`{- -}` 块注释
+- ✅ 运算符：类型签名 `::`、函数箭头 `->`、约束箭头 `=>`
+
+#### Elixir
+- ✅ 关键字：`def`、`defmodule`、`defp`、`do`、`end`、`fn`、`case`、`with`、`receive`、`use` 等
+- ✅ 字符串：单引号、双引号、三引号字符串
+- ✅ 注释：`#` 单行注释
+- ✅ 运算符：管道 `|>`、默认参数 `\\`、映射/关键字列表相关语法
+- ✅ 常用内置调用：`IO.puts`、`IO.inspect`、`Enum.map`
+
+**覆盖率**: 10/10 (100%)
 
 ---
 
@@ -176,6 +222,13 @@
 
 ### ✅ 已实现
 
+#### R
+- ✅ 关键字：`if`、`else`、`repeat`、`while`、`function`、`for`、`in`、`next`、`break`
+- ✅ 字符串：单引号、双引号字符串
+- ✅ 注释：`#` 单行注释
+- ✅ 运算符：`<-`、`<<-`、`->`、`%in%`、`%%`、`%/%`
+- ✅ 常用内置调用：`library`、`data.frame`、`ggplot`、`print`
+
 #### SQL
 - ✅ 关键字：`SELECT`、`FROM`、`WHERE`、`JOIN`、`LEFT`、`RIGHT`、`INNER`、`OUTER`、`ON`、`GROUP BY`、`ORDER BY`、`HAVING`、`INSERT`、`UPDATE`、`DELETE`、`CREATE`、`DROP`、`ALTER`、`TABLE`、`INDEX`、`VIEW`、`AS`、`AND`、`OR`、`NOT`、`IN`、`LIKE`、`BETWEEN`、`IS NULL`、`DISTINCT`、`LIMIT`、`OFFSET` 等（大小写不敏感）
 - ✅ 字符串：单引号字符串
@@ -199,7 +252,21 @@
 - ✅ 锚点（`&anchor`）与引用（`*alias`）
 - ✅ 文档分隔符（`---`、`...`）
 
-**覆盖率**: 3/3 (100%)
+#### TOML
+- ✅ 节（`[section]`）与数组节（`[[array]]`）
+- ✅ 键值对（`key = value`）
+- ✅ 字符串：单引号、双引号、三引号字符串
+- ✅ 布尔值：`true`、`false`
+- ✅ 注释：`#` 单行注释
+
+#### Dockerfile
+- ✅ 指令：`FROM`、`RUN`、`COPY`、`CMD`、`EXPOSE`、`ENV`、`WORKDIR`、`ENTRYPOINT`、`ARG`
+- ✅ 变量：`$VAR` 与 `${VAR}` 形式环境变量
+- ✅ 字符串：单引号、双引号字符串
+- ✅ 注释：`#` 单行注释
+- ✅ 指令关键字大小写不敏感
+
+**覆盖率**: 6/6 (100%)
 
 ---
 
@@ -457,9 +524,9 @@
 | 2 | 主题系统（`theme/`） | 12/12 | 0/12 | 100% |
 | 3 | 词法分析器基础设施（`lexer/`） | 9/9 | 0/9 | 100% |
 | 4 | 语言支持 — 系统语言 | 3/3 | 0/3 | 100% |
-| 5 | 语言支持 — 脚本语言 | 3/3 | 0/3 | 100% |
+| 5 | 语言支持 — 脚本语言 | 10/10 | 0/10 | 100% |
 | 6 | 语言支持 — 系统/底层语言 | 3/3 | 0/3 | 100% |
-| 7 | 语言支持 — 数据/配置语言 | 3/3 | 0/3 | 100% |
+| 7 | 语言支持 — 数据/配置语言 | 6/6 | 0/6 | 100% |
 | 8 | 语言支持 — 标记/样式语言 | 4/4 | 0/4 | 100% |
 | 9 | Markdown 代码围栏解析器（`parser/`） | 11/11 | 0/11 | 100% |
 | 10 | Compose 渲染组件（`renderer/`） | 12/12 | 0/12 | 100% |
@@ -468,7 +535,7 @@
 | 13 | 预览演示模块（`code-high-preview`） | 16/16 | 0/16 | 100% |
 | 14 | 多平台支持（KMP） | 5/5 | 0/5 | 100% |
 | 15 | 性能与工程质量 | 9/9 | 0/9 | 100% |
-| | **总计** | **139/139** | **0/139** | **100%** |
+| | **总计** | **149/149** | **0/149** | **100%** |
 
 > **注意**：`StreamingCodeBlock` 已合并入 `CodeBlock`（通过 `isStreaming` 参数控制），不再作为独立公开组件。`CodeBlock` 默认启用增量解析引擎，调用方无需感知内部实现。
 
@@ -511,18 +578,13 @@ androidApp
 
 ### 一、语言支持扩展
 
-| 优先级 | 语言 | 说明 |
-|--------|------|------|
-| **P1** | Ruby | `def`、`end`、`do`、`puts`、`require`、`attr_accessor` 等，Rails 生态常用 |
-| **P1** | PHP | `<?php`、`echo`、`function`、`class`、`$variable`、`->` 等，Web 后端常用 |
-| **P2** | Dart | Flutter 生态，`widget`、`setState`、`async`/`await`、`late`、`required` 等 |
-| **P2** | Scala | JVM 生态，`val`、`def`、`case class`、`trait`、`object`、`implicit` 等 |
-| **P2** | R | 数据科学，`<-`、`function`、`library`、`data.frame`、`ggplot` 等 |
-| **P2** | TOML | 配置文件，`[section]`、`key = value`、`[[array]]` 等 |
-| **P2** | Dockerfile | `FROM`、`RUN`、`COPY`、`CMD`、`EXPOSE`、`ENV`、`WORKDIR` 等 |
-| **P3** | Lua | 游戏脚本，`function`、`local`、`end`、`require`、`table` 等 |
-| **P3** | Haskell | 函数式，`data`、`type`、`class`、`instance`、`where`、`let`、`in` 等 |
-| **P3** | Elixir | `def`、`defmodule`、`do`、`end`、`|>`、`%{}` 等 |
+- ✅ 已完成并移动到对应章节：
+  - 脚本语言章节：Ruby、PHP、Dart、Scala、Lua、Haskell、Elixir
+  - 数据/配置语言章节：R、TOML、Dockerfile
+- 当前语言扩展方向可继续关注：
+  - 更多围栏语言别名与文件类型映射
+  - 更精细的语言自动检测规则
+  - 更深层的语言特性高亮，例如 heredoc、插值、宏与 DSL 专项语法
 
 ### 二、渲染能力扩展
 

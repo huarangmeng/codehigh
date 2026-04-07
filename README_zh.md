@@ -12,16 +12,16 @@
 ## 🌟 核心特性
 
 - **多端统一渲染**：使用 Compose Multiplatform 实现 Android、iOS、Desktop (JVM) 和 Web (Wasm/JS) 上一致的代码高亮效果
-- **18+ 编程语言支持**：内置支持 Kotlin、Java、Swift、Python、JavaScript、TypeScript、Go、Rust、C、C++、SQL、JSON、YAML、Bash、XML、HTML、CSS、Markdown 等
+- **28+ 编程语言支持**：内置支持 Kotlin、Java、Swift、Python、JavaScript、TypeScript、Ruby、PHP、Dart、Scala、Go、Rust、C、C++、R、SQL、JSON、YAML、TOML、Dockerfile、Bash、Lua、Haskell、Elixir、XML、HTML、CSS、Markdown 等
 - **增量高亮**：基于 AST 的增量解析和高亮，适用于流式场景（如 AI 对话、实时编辑）的高效更新
 - **丰富主题**：内置 4 套主题，包括 One Dark Pro、GitHub Light、Dracula Pro 和 Solarized Light，支持自定义主题
 - **完整代码块组件**：完整的代码块渲染，包含行号、复制按钮、语言标签、可折叠/展开、流式光标动画等功能
 - **Markdown 代码块解析器**：内置 Markdown 代码围栏解析器
 - **自定义词法分析器支持**：可扩展的词法分析器 API，支持添加更多编程语言
 - **Token 点击交互**：单个代码 Token 的点击回调，用于实现交互功能
-- **深色/浅色模式**：根据系统深色/浅色模式自动切换主题
+- **明暗主题支持**：内置明暗主题，支持显式选择和自定义主题
 
-## 📚 支持的语言 (18+)
+## 📚 支持的语言 (28+)
 
 <details>
 <summary><b>系统语言</b> — Kotlin、Java、Swift</summary>
@@ -32,11 +32,18 @@
 </details>
 
 <details>
-<summary><b>脚本语言</b> — Python、JavaScript、TypeScript</summary>
+<summary><b>脚本语言</b> — Python、JavaScript、TypeScript、Ruby、PHP、Dart、Scala、Lua、Haskell、Elixir</summary>
 
 - **Python**：关键字、字符串（单引号/双引号/三引号）、注释、装饰器、内置函数
 - **JavaScript**：关键字、字符串、注释、正则表达式、模板字面量
 - **TypeScript**：所有 JavaScript 特性加上 TypeScript 特定语法（类型、接口、泛型等）
+- **Ruby**：关键字、字符串、注释、实例变量、Rails 常用内置方法
+- **PHP**：`<?php` 标签、关键字、字符串、注释、`$variable` 变量、`->`/`::` 运算符
+- **Dart**：关键字、字符串、注解、Flutter 常见类型与 `setState`
+- **Scala**：关键字、字符串、注解、`case class`、`trait`、`object`
+- **Lua**：关键字、字符串、注释、`local` 变量、`require`/`print`
+- **Haskell**：关键字、字符串、注释、类型签名、代数数据类型
+- **Elixir**：关键字、字符串、管道操作符、模块定义、常见内置调用
 </details>
 
 <details>
@@ -48,11 +55,14 @@
 </details>
 
 <details>
-<summary><b>数据/配置语言</b> — SQL、JSON、YAML</summary>
+<summary><b>数据/配置语言</b> — R、SQL、JSON、YAML、TOML、Dockerfile</summary>
 
+- **R**：赋值操作符、函数定义、`library`、`data.frame`、常用数据分析内置调用
 - **SQL**：关键字、字符串、注释、标识符
 - **JSON**：字符串、数字、布尔值、null、对象、数组
 - **YAML**：键、值、字符串、注释、列表、字典
+- **TOML**：节、数组节、键值对、字符串、布尔值
+- **Dockerfile**：构建指令、环境变量、字符串、注释
 </details>
 
 <details>
