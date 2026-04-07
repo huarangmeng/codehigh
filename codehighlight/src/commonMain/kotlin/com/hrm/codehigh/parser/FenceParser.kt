@@ -52,8 +52,9 @@ public object FenceParser {
 
             // 提取 info string（语言标识符）
             val infoString = trimmed.substring(fenceLen).trim()
-            // info string 仅取第一个词作为语言标识符
             val language = infoString.split(Regex("\\s+")).firstOrNull()?.trim() ?: ""
+            val highlightedLines = parseHighlightedLines(infoString)
+            val startLine = parseStartLine(infoString)
 
             // 收集代码内容
             val codeLines = mutableListOf<String>()
@@ -81,7 +82,15 @@ public object FenceParser {
             }
 
             val code = codeLines.joinToString("\n")
-            blocks.add(FenceBlock(language, code, isClosed))
+            blocks.add(
+                FenceBlock(
+                    language = language,
+                    code = code,
+                    isClosed = isClosed,
+                    highlightedLines = highlightedLines,
+                    startLine = startLine
+                )
+            )
         }
 
         return blocks
@@ -176,6 +185,11 @@ public object FenceParser {
             return "haskell"
         }
 
+        if (trimmed.contains(Regex("(?m)^(diff --git|index\\s+[0-9a-f]+|@@\\s.*@@|\\+\\+\\+\\s|---\\s)")) ||
+            trimmed.contains(Regex("(?m)^[+-][^+-].+"))) {
+            return "diff"
+        }
+
         // JavaScript/TypeScript 特征
         if (trimmed.contains(Regex("\\bconst\\s+\\w+\\s*=")) ||
             trimmed.contains(Regex("\\bfunction\\s+\\w+\\s*\\(")) ||
@@ -252,5 +266,45 @@ public object FenceParser {
         }
 
         return ""
+    }
+
+    private fun parseHighlightedLines(infoString: String): Set<Int> {
+        val rawValue = extractFenceOption(infoString, "hl_lines") ?: return emptySet()
+        val result = linkedSetOf<Int>()
+        rawValue.split(Regex("[,\\s]+"))
+            .filter { it.isNotBlank() }
+            .forEach { part ->
+                val rangeMatch = Regex("^(\\d+)-(\\d+)$").matchEntire(part)
+                if (rangeMatch != null) {
+                    val start = rangeMatch.groupValues[1].toInt()
+                    val end = rangeMatch.groupValues[2].toInt()
+                    if (start > 0 && end >= start) {
+                        for (line in start..end) {
+                            result.add(line)
+                        }
+                    }
+                } else {
+                    val line = part.toIntOrNull()
+                    if (line != null && line > 0) {
+                        result.add(line)
+                    }
+                }
+            }
+        return result
+    }
+
+    private fun parseStartLine(infoString: String): Int {
+        return extractFenceOption(infoString, "startline")?.toIntOrNull()?.takeIf { it > 0 } ?: 1
+    }
+
+    private fun extractFenceOption(infoString: String, key: String): String? {
+        val patterns = listOf(
+            Regex("""\b$key\s*=\s*"([^"]+)""""),
+            Regex("""\b$key\s*=\s*'([^']+)'"""),
+            Regex("""\b$key\s*=\s*([^\s\}]+)""")
+        )
+        return patterns.firstNotNullOfOrNull { regex ->
+            regex.find(infoString)?.groupValues?.getOrNull(1)
+        }
     }
 }

@@ -15,7 +15,7 @@ A high-performance cross-platform code highlighting library developed based on K
 - **28+ Programming Languages**: Built-in support for Kotlin, Java, Swift, Python, JavaScript, TypeScript, Ruby, PHP, Dart, Scala, Go, Rust, C, C++, R, SQL, JSON, YAML, TOML, Dockerfile, Bash, Lua, Haskell, Elixir, XML, HTML, CSS, Markdown, and more.
 - **Incremental Highlighting**: AST-based incremental parsing and highlighting for efficient updates in streaming scenarios (e.g., AI chat, real-time editing).
 - **Rich Themes**: 4 built-in themes including One Dark Pro, GitHub Light, Dracula Pro, and Solarized Light, with custom theme support.
-- **Code Block Components**: Complete code block rendering with line numbers, copy button, language label, collapsible/expandable, and streaming cursor animation.
+- **Code Block Components**: Complete code block rendering with line numbers, configurable start lines, highlighted lines, diff mode, copy button, language label, collapsible/expandable, and streaming cursor animation.
 - **Markdown Fence Parser**: Built-in parser for Markdown code fence blocks.
 - **Custom Lexer Support**: Extensible lexer API for adding support for additional programming languages.
 - **Token Click Interaction**: Click callback for individual code tokens for interactive features.

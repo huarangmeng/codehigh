@@ -121,6 +121,32 @@ internal fun InteractionCategory() {
             )
         }
 
+        item {
+            Text("行高亮与起始行号", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            CodeBlock(
+                code = SampleCode.KOTLIN,
+                language = "kotlin",
+                showLineNumbers = true,
+                startLine = 100,
+                highlightedLines = setOf(2, 4, 5),
+                showCopyButton = showCopyButton,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        item {
+            Text("Diff 模式", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            CodeBlock(
+                code = SampleCode.DIFF,
+                language = "diff",
+                showLineNumbers = true,
+                showCopyButton = showCopyButton,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         // 行内代码尺寸测量示例
         item {
             val inlineCodeText = remember { "val answer = 42" }

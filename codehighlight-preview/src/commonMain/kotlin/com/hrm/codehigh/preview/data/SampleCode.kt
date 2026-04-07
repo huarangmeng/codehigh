@@ -638,6 +638,20 @@ internal object SampleCode {
         User.greet(" Alice ")
     """.trimIndent()
 
+    val DIFF = """
+        diff --git a/UserService.kt b/UserService.kt
+        index 1234567..89abcde 100644
+        --- a/UserService.kt
+        +++ b/UserService.kt
+        @@ -1,6 +1,8 @@
+         class UserService {
+        -    fun findUser(id: Int): User? = null
+        +    fun findUser(id: Int): User? {
+        +        return repository.findById(id)
+        +    }
+         }
+    """.trimIndent()
+
     val HTML = """
         <!DOCTYPE html>
         <html lang="zh-CN">

@@ -17,7 +17,8 @@ class ExtendedLanguageSupportTest {
             "rscript" to "r",
             "docker" to "dockerfile",
             "hs" to "haskell",
-            "exs" to "elixir"
+            "exs" to "elixir",
+            "patch" to "diff"
         )
 
         aliases.forEach { (alias, canonical) ->
@@ -137,9 +138,21 @@ class ExtendedLanguageSupportTest {
 
     @Test
     fun should_returnLexer_when_extendedLanguageRequested() {
-        val languages = listOf("ruby", "php", "dart", "scala", "r", "toml", "dockerfile", "lua", "haskell", "elixir")
+        val languages = listOf("ruby", "php", "dart", "scala", "r", "toml", "dockerfile", "lua", "haskell", "elixir", "diff")
         languages.forEach { language ->
             assertNotNull(LanguageRegistry.get(language))
         }
+    }
+
+    @Test
+    fun should_tokenizeDiff_when_patchContentPresent() {
+        val tokens = LanguageRegistry.getOrPlain("diff").tokenize(
+            "diff --git a/file.kt b/file.kt\n@@ -1,2 +1,2 @@\n-old line\n+new line"
+        )
+
+        assertTrue(tokens.any { it.type == TokenType.ANNOTATION && it.text.startsWith("diff --git") })
+        assertTrue(tokens.any { it.type == TokenType.FUNCTION && it.text.startsWith("@@") })
+        assertTrue(tokens.any { it.type == TokenType.OPERATOR && it.text == "-" })
+        assertTrue(tokens.any { it.type == TokenType.OPERATOR && it.text == "+" })
     }
 }

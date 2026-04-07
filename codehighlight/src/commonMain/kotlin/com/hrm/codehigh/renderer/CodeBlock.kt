@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hrm.codehigh.ast.CodeToken
@@ -59,6 +61,8 @@ fun CodeBlock(
     isStreaming: Boolean = false,
     theme: CodeTheme = LocalCodeTheme.current,
     showLineNumbers: Boolean = false,
+    startLine: Int = 1,
+    highlightedLines: Set<Int> = emptySet(),
     showCopyButton: Boolean = true,
     maxVisibleLines: Int? = null,
     onTokenClick: ((CodeToken) -> Unit)? = null
@@ -77,8 +81,14 @@ fun CodeBlock(
     val visibleLines = lines.take(visibleLineCount)
     val visibleCode = visibleLines.joinToString("\n")
     val visibleAst = remember(visibleCode, language) { highlighter.update(visibleCode, language) }
-    val lineHighlights = remember(visibleAst, theme) {
-        buildLineHighlights(visibleLines, visibleAst.tokens, theme)
+    val lineHighlights = remember(visibleAst, theme, language, highlightedLines, visibleLineCount) {
+        buildLineRenders(
+            sourceLines = visibleLines,
+            tokens = visibleAst.tokens,
+            theme = theme,
+            language = language,
+            highlightedLines = highlightedLines
+        )
     }
 
     Column(
@@ -110,16 +120,17 @@ fun CodeBlock(
             Column(
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
-                lineHighlights.forEachIndexed { index, lineText ->
+                lineHighlights.forEachIndexed { index, lineRender ->
                     val isLastLine = index == lineHighlights.lastIndex
+                    val diffMarker = diffMarkerForLine(lineRender.kind)
                     Row(
-                        modifier = Modifier.height(IntrinsicSize.Min),
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 行号
                         if (showLineNumbers) {
                             BasicText(
-                                text = (index + 1).toString(),
+                                text = (startLine + index).toString(),
                                 style = TextStyle(
                                     color = theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT).copy(alpha = 0.5f),
                                     fontSize = 13.sp,
@@ -132,7 +143,6 @@ fun CodeBlock(
                                     .padding(end = 8.dp),
                                 maxLines = 1
                             )
-                            // 分隔线
                             Box(
                                 modifier = Modifier
                                     .width(1.dp)
@@ -144,20 +154,32 @@ fun CodeBlock(
                             )
                         }
 
-                        // 代码行文本
                         Row(
-                            modifier = Modifier.padding(horizontal = 12.dp),
+                            modifier = Modifier
+                                .background(theme.backgroundForLine(lineRender.kind))
+                                .padding(horizontal = 12.dp),
                             verticalAlignment = Alignment.Bottom
                         ) {
-                            BasicText(
-                                text = lineText,
-                                style = TextStyle(
-                                    fontSize = 13.sp,
-                                    fontFamily = FontFamily.Monospace,
-                                    lineHeight = 20.sp
+                            if (diffMarker != null) {
+                                BasicText(
+                                    text = diffMarker,
+                                    style = TextStyle(
+                                        color = theme.diffMarkerColorForLine(lineRender.kind),
+                                        fontSize = 13.sp,
+                                        fontFamily = FontFamily.Monospace,
+                                        fontWeight = FontWeight.Bold,
+                                        lineHeight = 20.sp
+                                    ),
+                                    modifier = Modifier
+                                        .background(theme.diffMarkerBackgroundForLine(lineRender.kind))
+                                        .padding(horizontal = 6.dp)
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+                            BasicText(
+                                text = lineRender.text,
+                                style = theme.textStyleForLine(lineRender.kind)
                             )
-                            // 流式光标仅在最后一行末尾显示
                             if (isLastLine) {
                                 StreamingCursor(
                                     isStreaming = isStreaming,
@@ -185,6 +207,56 @@ fun CodeBlock(
             )
         }
     }
+}
+
+private fun diffMarkerForLine(kind: CodeLineKind): String? = when (kind) {
+    CodeLineKind.DIFF_ADDED -> "+"
+    CodeLineKind.DIFF_REMOVED -> "-"
+    CodeLineKind.DIFF_META_HEADER -> "⋯"
+    CodeLineKind.DIFF_META_HUNK -> "@"
+    else -> null
+}
+
+private fun CodeTheme.diffMarkerBackgroundForLine(kind: CodeLineKind) = when (kind) {
+    CodeLineKind.DIFF_ADDED -> if (isDark) androidx.compose.ui.graphics.Color(0xFF224D35) else androidx.compose.ui.graphics.Color(0xFFD9F5E0)
+    CodeLineKind.DIFF_REMOVED -> if (isDark) androidx.compose.ui.graphics.Color(0xFF5A2730) else androidx.compose.ui.graphics.Color(0xFFFADADD)
+    CodeLineKind.DIFF_META_HEADER -> if (isDark) androidx.compose.ui.graphics.Color(0xFF374151) else androidx.compose.ui.graphics.Color(0xFFE5E7EB)
+    CodeLineKind.DIFF_META_HUNK -> if (isDark) androidx.compose.ui.graphics.Color(0xFF1F4B70) else androidx.compose.ui.graphics.Color(0xFFDCEEFF)
+    else -> androidx.compose.ui.graphics.Color.Transparent
+}
+
+private fun CodeTheme.diffMarkerColorForLine(kind: CodeLineKind) = when (kind) {
+    CodeLineKind.DIFF_ADDED -> if (isDark) androidx.compose.ui.graphics.Color(0xFF9BE9A8) else androidx.compose.ui.graphics.Color(0xFF1F7A38)
+    CodeLineKind.DIFF_REMOVED -> if (isDark) androidx.compose.ui.graphics.Color(0xFFFFA8B5) else androidx.compose.ui.graphics.Color(0xFFB42318)
+    CodeLineKind.DIFF_META_HEADER -> if (isDark) androidx.compose.ui.graphics.Color(0xFFD1D5DB) else androidx.compose.ui.graphics.Color(0xFF4B5563)
+    CodeLineKind.DIFF_META_HUNK -> if (isDark) androidx.compose.ui.graphics.Color(0xFF9CDCFE) else androidx.compose.ui.graphics.Color(0xFF0958D9)
+    else -> colorFor(com.hrm.codehigh.ast.TokenType.PLAIN)
+}
+
+private fun CodeTheme.textColorForLine(kind: CodeLineKind) = when (kind) {
+    CodeLineKind.DIFF_META_HEADER -> if (isDark) androidx.compose.ui.graphics.Color(0xFFE5E7EB) else androidx.compose.ui.graphics.Color(0xFF374151)
+    CodeLineKind.DIFF_META_HUNK -> if (isDark) androidx.compose.ui.graphics.Color(0xFFBFE3FF) else androidx.compose.ui.graphics.Color(0xFF0B4F8A)
+    else -> colorFor(com.hrm.codehigh.ast.TokenType.PLAIN)
+}
+
+private fun CodeTheme.fontWeightForLine(kind: CodeLineKind) = when (kind) {
+    CodeLineKind.DIFF_META_HEADER, CodeLineKind.DIFF_META_HUNK -> FontWeight.SemiBold
+    else -> FontWeight.Normal
+}
+
+private fun CodeTheme.textStyleForLine(kind: CodeLineKind) = when (kind) {
+    CodeLineKind.DIFF_META_HEADER, CodeLineKind.DIFF_META_HUNK -> TextStyle(
+        color = textColorForLine(kind),
+        fontSize = 13.sp,
+        fontFamily = FontFamily.Monospace,
+        fontWeight = fontWeightForLine(kind),
+        lineHeight = 20.sp
+    )
+    else -> TextStyle(
+        fontSize = 13.sp,
+        fontFamily = FontFamily.Monospace,
+        lineHeight = 20.sp
+    )
 }
 
 /**

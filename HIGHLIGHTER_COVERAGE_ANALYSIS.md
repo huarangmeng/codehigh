@@ -323,6 +323,8 @@
 - ✅ 支持 `` ` `` 反引号围栏（≥ 3 个）
 - ✅ 支持 `~~~` 波浪线围栏（≥ 3 个）
 - ✅ info string 仅取第一个词作为语言标识符
+- ✅ 支持解析 `hl_lines="1 3-5"`，输出为高亮行集合
+- ✅ 支持解析 `startline=42`，输出为代码块起始行号
 
 #### 流式场景支持
 - ✅ 未闭合围栏（流式输出中）仍返回已有内容，不等待闭合符号
@@ -333,12 +335,13 @@
 - ✅ 无语言标识时启发式语言检测（基于关键词规则）
 - ✅ 检测逻辑封装为 `internal fun detectLanguage(code: String): String`
 - ✅ 检测失败时降级为空字符串（渲染层降级为 `PlainTextLexer`）
+- ✅ 支持识别 `diff`/patch 格式代码块
 
 #### 多围栏支持
 - ✅ 一段文本中多个代码围栏的分段解析
 - ✅ 返回 `List<FenceBlock>`，代码块之间的普通文本不包含在结果中
 
-**覆盖率**: 11/11 (100%)
+**覆盖率**: 14/14 (100%)
 
 ---
 
@@ -347,11 +350,14 @@
 ### ✅ 已实现
 
 #### CodeBlock 组件（`public`，唯一对外渲染入口）
-- ✅ `CodeBlock(code, language, isStreaming, theme, showLineNumbers, showCopyButton, maxVisibleLines, onTokenClick)` 完整签名
+- ✅ `CodeBlock(code, language, isStreaming, theme, showLineNumbers, startLine, highlightedLines, showCopyButton, maxVisibleLines, onTokenClick)` 完整签名
 - ✅ `isStreaming` 参数默认为 `false`；为 `true` 时在末尾显示光标动画，内部自动启用增量解析
 - ✅ **默认启用增量解析**：内部持有 `IncrementalHighlighter`，每次 `code` 变化时自动增量更新，无需调用方感知
 - ✅ 语言标签显示（右上角或左上角，`internal LanguageLabel`）
 - ✅ 行号列（`internal LineNumberColumn`），行号与代码内容垂直对齐
+- ✅ 支持起始行号偏移（`startLine`）
+- ✅ 支持指定行背景高亮（`highlightedLines`）
+- ✅ 支持 Diff 模式行背景渲染（新增行/删除行/元信息）
 - ✅ 复制按钮（`internal CopyButton`），点击后将原始代码复制到剪贴板
 - ✅ 代码折叠/展开按钮（`maxVisibleLines` 配置，超出行数时显示）
 - ✅ 水平滚动支持（代码行超出宽度时可横向滚动，不截断）
@@ -368,7 +374,7 @@
 - ✅ 每个 Token 对应一个 `SpanStyle`，颜色来自 `CodeTheme.safeColorFor(token.type)`
 - ✅ `SpanStyle` 支持粗体（关键字）、斜体（注释）等字体样式差异化
 
-**覆盖率**: 12/12 (100%)
+**覆盖率**: 15/15 (100%)
 
 ---
 
@@ -528,14 +534,14 @@
 | 6 | 语言支持 — 系统/底层语言 | 3/3 | 0/3 | 100% |
 | 7 | 语言支持 — 数据/配置语言 | 6/6 | 0/6 | 100% |
 | 8 | 语言支持 — 标记/样式语言 | 4/4 | 0/4 | 100% |
-| 9 | Markdown 代码围栏解析器（`parser/`） | 11/11 | 0/11 | 100% |
-| 10 | Compose 渲染组件（`renderer/`） | 12/12 | 0/12 | 100% |
+| 9 | Markdown 代码围栏解析器（`parser/`） | 14/14 | 0/14 | 100% |
+| 10 | Compose 渲染组件（`renderer/`） | 15/15 | 0/15 | 100% |
 | 11 | 流式增量渲染引擎（`stream/`） | 9/9 | 0/9 | 100% |
 | 12 | 可见性原则（最小对外暴露） | 23/23 | 0/23 | 100% |
 | 13 | 预览演示模块（`code-high-preview`） | 16/16 | 0/16 | 100% |
 | 14 | 多平台支持（KMP） | 5/5 | 0/5 | 100% |
 | 15 | 性能与工程质量 | 9/9 | 0/9 | 100% |
-| | **总计** | **149/149** | **0/149** | **100%** |
+| | **总计** | **155/155** | **0/155** | **100%** |
 
 > **注意**：`StreamingCodeBlock` 已合并入 `CodeBlock`（通过 `isStreaming` 参数控制），不再作为独立公开组件。`CodeBlock` 默认启用增量解析引擎，调用方无需感知内部实现。
 
@@ -588,13 +594,13 @@ androidApp
 
 ### 二、渲染能力扩展
 
-| 优先级 | 特性 | 说明 |
-|--------|------|------|
-| **P1** | 行高亮（`hl_lines`） | 指定行号高亮显示（背景色标注），配合 `FenceParser` 的 `hl_lines` 属性 |
-| **P1** | 起始行号（`startline`） | 代码片段从指定行号开始计数，配合 `FenceParser` 的 `startline` 属性 |
-| **P2** | 差异高亮（Diff 模式） | `+` 行绿色背景、`-` 行红色背景，支持 `diff` 语言标识 |
-| **P2** | 代码搜索/过滤 | 在代码块内搜索关键词并高亮匹配位置 |
-| **P3** | 代码缩略图（Minimap） | 类似 VS Code 右侧缩略图，用于长代码块快速定位 |
+- ✅ 已完成并移动到对应章节：
+  - 围栏解析章节：`hl_lines`、`startline`
+  - 渲染组件章节：行高亮、起始行号、Diff 模式
+- 当前渲染扩展方向可继续关注：
+  - 代码搜索/过滤
+  - 代码缩略图（Minimap）
+  - 更丰富的行级交互能力
 
 ### 三、主题扩展
 

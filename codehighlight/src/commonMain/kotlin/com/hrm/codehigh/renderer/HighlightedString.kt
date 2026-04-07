@@ -1,5 +1,6 @@
 package com.hrm.codehigh.renderer
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -9,6 +10,20 @@ import com.hrm.codehigh.ast.CodeToken
 import com.hrm.codehigh.ast.TokenType
 import com.hrm.codehigh.theme.CodeTheme
 import com.hrm.codehigh.theme.safeColorFor
+
+internal enum class CodeLineKind {
+    NORMAL,
+    HIGHLIGHTED,
+    DIFF_ADDED,
+    DIFF_REMOVED,
+    DIFF_META_HEADER,
+    DIFF_META_HUNK
+}
+
+internal data class CodeLineRender(
+    val text: AnnotatedString,
+    val kind: CodeLineKind
+)
 
 /**
  * 将 Token 列表按行拆分，返回每行对应的高亮 AnnotatedString 列表。
@@ -25,6 +40,20 @@ internal fun buildLineHighlights(
     tokens: List<CodeToken>,
     theme: CodeTheme
 ): List<AnnotatedString> {
+    return buildLineRenders(
+        sourceLines = sourceLines,
+        tokens = tokens,
+        theme = theme
+    ).map { it.text }
+}
+
+internal fun buildLineRenders(
+    sourceLines: List<String>,
+    tokens: List<CodeToken>,
+    theme: CodeTheme,
+    language: String = "",
+    highlightedLines: Set<Int> = emptySet()
+): List<CodeLineRender> {
     // 将所有 token 文本拼接后按 \n 拆分，重新映射到每行
     // 策略：先构建整体 AnnotatedString，再按换行符切割
     val full = buildHighlightedString(tokens, theme)
@@ -40,7 +69,17 @@ internal fun buildLineHighlights(
         // 跳过换行符（\n 占 1 个字符）
         offset = end + 1
     }
-    return result
+    return result.mapIndexed { index, line ->
+        CodeLineRender(
+            text = line,
+            kind = resolveLineKind(
+                lineIndex = index,
+                lineText = sourceLines.getOrElse(index) { "" },
+                language = language,
+                highlightedLines = highlightedLines
+            )
+        )
+    }
 }
 
 /**
@@ -77,4 +116,32 @@ public fun buildHighlightedString(
             pop()
         }
     }
+}
+
+internal fun resolveLineKind(
+    lineIndex: Int,
+    lineText: String,
+    language: String,
+    highlightedLines: Set<Int>
+): CodeLineKind {
+    if (language.lowercase() == "diff") {
+        return when {
+            lineText.startsWith("@@") -> CodeLineKind.DIFF_META_HUNK
+            lineText.startsWith("diff ") || lineText.startsWith("index ") || lineText.startsWith("+++") || lineText.startsWith("---") -> CodeLineKind.DIFF_META_HEADER
+            lineText.startsWith("+") -> CodeLineKind.DIFF_ADDED
+            lineText.startsWith("-") -> CodeLineKind.DIFF_REMOVED
+            else -> CodeLineKind.NORMAL
+        }
+    }
+
+    return if (lineIndex + 1 in highlightedLines) CodeLineKind.HIGHLIGHTED else CodeLineKind.NORMAL
+}
+
+internal fun CodeTheme.backgroundForLine(kind: CodeLineKind) = when (kind) {
+    CodeLineKind.NORMAL -> Color.Transparent
+    CodeLineKind.HIGHLIGHTED -> highlightedLineBackground
+    CodeLineKind.DIFF_ADDED -> diffAddedLineBackground
+    CodeLineKind.DIFF_REMOVED -> diffRemovedLineBackground
+    CodeLineKind.DIFF_META_HEADER -> diffMetaLineBackground
+    CodeLineKind.DIFF_META_HUNK -> diffMetaLineBackground
 }

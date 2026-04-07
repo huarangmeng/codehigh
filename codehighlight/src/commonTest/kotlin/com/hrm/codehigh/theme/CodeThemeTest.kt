@@ -80,4 +80,13 @@ class CodeThemeTest {
         val safeColor = theme.safeColorFor(TokenType.PLAIN)
         assertEquals(plainColor, safeColor)
     }
+
+    @Test
+    fun should_provideLineBackgroundColors_when_themeUsedForAdvancedRendering() {
+        val theme = OneDarkProTheme
+        assertNotEquals(Color.Unspecified, theme.highlightedLineBackground)
+        assertNotEquals(Color.Unspecified, theme.diffAddedLineBackground)
+        assertNotEquals(Color.Unspecified, theme.diffRemovedLineBackground)
+        assertNotEquals(Color.Unspecified, theme.diffMetaLineBackground)
+    }
 }

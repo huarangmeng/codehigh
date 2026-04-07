@@ -30,7 +30,6 @@ fun CodeHighPreviewApp() {
     var selectedCategory by remember { mutableStateOf(PreviewCategory.LANGUAGE) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // 上方内容区域
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             when (selectedCategory) {
                 PreviewCategory.LANGUAGE -> LanguageCategory()
@@ -40,7 +39,6 @@ fun CodeHighPreviewApp() {
             }
         }
 
-        // 底部导航栏
         NavigationBar {
             PreviewCategory.entries.forEach { category ->
                 NavigationBarItem(
@@ -54,9 +52,6 @@ fun CodeHighPreviewApp() {
     }
 }
 
-/**
- * 预览分类枚举。
- */
 internal enum class PreviewCategory(val label: String, val icon: String) {
     LANGUAGE("语言高亮", "🔤"),
     THEME("主题对比", "🎨"),

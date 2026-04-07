@@ -4,7 +4,7 @@ package com.hrm.codehigh.lexer
  * 语言词法分析器注册表，管理语言标识符到 Lexer 的映射。
  * 对外公开 get() 和 register() 方法，其余实现细节标记为 internal。
  */
-public object LanguageRegistry {
+object LanguageRegistry {
 
     /** 语言标识符到 Lexer 的映射表，internal 不对外暴露 */
     internal val registry: MutableMap<String, Lexer> = mutableMapOf()
@@ -21,7 +21,7 @@ public object LanguageRegistry {
      * @param lang 语言标识符（小写）
      * @param lexer 对应的词法分析器
      */
-    public fun register(lang: String, lexer: Lexer) {
+    fun register(lang: String, lexer: Lexer) {
         registry[lang.lowercase()] = lexer
     }
 
@@ -31,7 +31,7 @@ public object LanguageRegistry {
      * @param alias 别名（如 "js"）
      * @param canonical 规范名称（如 "javascript"）
      */
-    public fun registerAlias(alias: String, canonical: String) {
+    fun registerAlias(alias: String, canonical: String) {
         aliases[alias.lowercase()] = canonical.lowercase()
     }
 
@@ -42,7 +42,7 @@ public object LanguageRegistry {
      * @param lang 语言标识符
      * @return 对应的词法分析器，未找到时返回 null
      */
-    public fun get(lang: String): Lexer? {
+    fun get(lang: String): Lexer? {
         ensureDefaultsRegistered()
         val normalized = lang.lowercase().trim()
         val canonical = aliases[normalized] ?: normalized
@@ -53,7 +53,7 @@ public object LanguageRegistry {
      * 获取词法分析器，未知语言降级为 PlainTextLexer。
      * 对外公开，供渲染层使用。
      */
-    public fun getOrPlain(lang: String): Lexer {
+    fun getOrPlain(lang: String): Lexer {
         return get(lang) ?: PlainTextLexer
     }
 
@@ -142,6 +142,8 @@ public object LanguageRegistry {
         register("bash", BashLexer)
         registerAlias("sh", "bash")
         registerAlias("shell", "bash")
+        register("diff", DiffLexer)
+        registerAlias("patch", "diff")
         register("xml", XmlLexer)
         register("html", HtmlLexer)
         registerAlias("htm", "html")

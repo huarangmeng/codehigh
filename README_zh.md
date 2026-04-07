@@ -15,7 +15,7 @@
 - **28+ 编程语言支持**：内置支持 Kotlin、Java、Swift、Python、JavaScript、TypeScript、Ruby、PHP、Dart、Scala、Go、Rust、C、C++、R、SQL、JSON、YAML、TOML、Dockerfile、Bash、Lua、Haskell、Elixir、XML、HTML、CSS、Markdown 等
 - **增量高亮**：基于 AST 的增量解析和高亮，适用于流式场景（如 AI 对话、实时编辑）的高效更新
 - **丰富主题**：内置 4 套主题，包括 One Dark Pro、GitHub Light、Dracula Pro 和 Solarized Light，支持自定义主题
-- **完整代码块组件**：完整的代码块渲染，包含行号、复制按钮、语言标签、可折叠/展开、流式光标动画等功能
+- **完整代码块组件**：完整的代码块渲染，包含行号、起始行号、指定行高亮、Diff 模式、复制按钮、语言标签、可折叠/展开、流式光标动画等功能
 - **Markdown 代码块解析器**：内置 Markdown 代码围栏解析器
 - **自定义词法分析器支持**：可扩展的词法分析器 API，支持添加更多编程语言
 - **Token 点击交互**：单个代码 Token 的点击回调，用于实现交互功能

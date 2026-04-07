@@ -62,6 +62,16 @@ class FenceParserTest {
     }
 
     @Test
+    fun should_parseFenceOptions_when_hlLinesAndStartlinePresent() {
+        val text = "```kotlin hl_lines=\"1 3-4\" startline=42\nfun hello() {}\nprintln(\"ok\")\nreturn\n}\n```"
+        val result = FenceParser.parse(text)
+        assertNotNull(result)
+        assertEquals("kotlin", result.language)
+        assertEquals(setOf(1, 3, 4), result.highlightedLines)
+        assertEquals(42, result.startLine)
+    }
+
+    @Test
     fun should_parseMultipleFences_when_multipleCodeBlocks() {
         val text = """
             ```kotlin
@@ -115,7 +125,8 @@ class FenceParserTest {
             "dockerfile" to "FROM eclipse-temurin:21\nWORKDIR /app\nCOPY . .",
             "lua" to "local function greet(name)\n  print(name)\nend",
             "haskell" to "module Main where\n\ndata User = User String Int",
-            "elixir" to "defmodule User do\n  def greet(name), do: IO.puts(name)\nend"
+            "elixir" to "defmodule User do\n  def greet(name), do: IO.puts(name)\nend",
+            "diff" to "diff --git a/file.kt b/file.kt\n@@ -1,2 +1,2 @@\n-old line\n+new line"
         )
 
         cases.forEach { (expected, code) ->

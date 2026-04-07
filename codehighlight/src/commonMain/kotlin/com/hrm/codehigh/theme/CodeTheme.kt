@@ -16,6 +16,18 @@ interface CodeTheme {
 
     /** 是否为暗色主题 */
     val isDark: Boolean
+
+    val highlightedLineBackground: Color
+        get() = if (isDark) Color(0x22FFFFFF) else Color(0x12000000)
+
+    val diffAddedLineBackground: Color
+        get() = if (isDark) Color(0x3340A15F) else Color(0x2234D058)
+
+    val diffRemovedLineBackground: Color
+        get() = if (isDark) Color(0x33A84C57) else Color(0x22FF6B6B)
+
+    val diffMetaLineBackground: Color
+        get() = if (isDark) Color(0x224B5563) else Color(0x140A66A1)
 }
 
 /**
