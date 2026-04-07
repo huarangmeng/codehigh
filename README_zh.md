@@ -2,6 +2,7 @@
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg)](https://kotlinlang.org)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.10.0-brightgreen.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.huarangmeng/codehighlight.svg?color=orange&label=Maven%20Central)](https://central.sonatype.com/search?q=io.github.huarangmeng%3Acodehighlight)
 [![Android API](https://img.shields.io/badge/Android%20API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -82,6 +83,36 @@
 | **GithubLight** | 亮色 | 基于 GitHub 的代码高亮配色 |
 | **DraculaPro** | 暗色 | 基于 Dracula Pro 配色方案 |
 | **SolarizedLight** | 亮色 | 基于 Ethan Schoonover 的 Solarized Light |
+
+## 📦 引入方式
+
+### 添加依赖
+
+先在 `gradle/libs.versions.toml` 中声明版本和库：
+
+```toml
+[versions]
+codehigh = "1.0.1"
+
+[libraries]
+codehigh = { module = "io.github.huarangmeng:codehighlight", version.ref = "codehigh" }
+```
+
+然后在模块的 `build.gradle.kts` 中引入：
+
+```kotlin
+dependencies {
+    implementation(libs.codehigh)
+}
+```
+
+如果你没有使用 Version Catalog，也可以直接添加依赖：
+
+```kotlin
+dependencies {
+    implementation("io.github.huarangmeng:codehighlight:1.0.1")
+}
+```
 
 ## 🛠️ 使用说明
 

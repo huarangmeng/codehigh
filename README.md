@@ -2,6 +2,7 @@
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg)](https://kotlinlang.org)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.10.0-brightgreen.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.huarangmeng/codehighlight.svg?color=orange&label=Maven%20Central)](https://central.sonatype.com/search?q=io.github.huarangmeng%3Acodehighlight)
 [![Android API](https://img.shields.io/badge/Android%20API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -82,6 +83,36 @@ A high-performance cross-platform code highlighting library developed based on K
 | **GithubLight** | Light | Based on GitHub's code highlighting colors |
 | **DraculaPro** | Dark | Based on the Dracula Pro color scheme |
 | **SolarizedLight** | Light | Based on Ethan Schoonover's Solarized Light |
+
+## 📦 Installation
+
+### Add Dependency
+
+Add to your `gradle/libs.versions.toml`:
+
+```toml
+[versions]
+codehigh = "1.0.1"
+
+[libraries]
+codehigh = { module = "io.github.huarangmeng:codehighlight", version.ref = "codehigh" }
+```
+
+Then add it in your module's `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation(libs.codehigh)
+}
+```
+
+If you do not use Version Catalog, you can add the dependency directly:
+
+```kotlin
+dependencies {
+    implementation("io.github.huarangmeng:codehighlight:1.0.1")
+}
+```
 
 ## 🛠️ Usage
 
