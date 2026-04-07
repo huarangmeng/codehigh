@@ -1,5 +1,6 @@
 package com.hrm.codehigh.stream
 
+import com.hrm.codehigh.ast.TokenType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -42,10 +43,41 @@ class IncrementalHighlighterTest {
         val highlighter = IncrementalHighlighter()
         val code1 = "fun hello() {"
         val code2 = "fun hello() {\n    println(\"world\")\n}"
-        val ast1 = highlighter.update(code1, "kotlin")
+        highlighter.update(code1, "kotlin")
         val ast2 = highlighter.update(code2, "kotlin")
         assertNotNull(ast2)
         assertEquals(code2, ast2.source)
+    }
+
+    @Test
+    fun should_reclassifyKeyword_when_identifierCompletesDuringStreaming() {
+        val highlighter = IncrementalHighlighter()
+
+        highlighter.update("fu", "kotlin")
+        val ast = highlighter.update("fun", "kotlin")
+
+        assertTrue(ast.tokens.any { it.text == "fun" && it.type == TokenType.KEYWORD })
+    }
+
+    @Test
+    fun should_reclassifyFunction_when_parenthesisAppendedDuringStreaming() {
+        val highlighter = IncrementalHighlighter()
+
+        highlighter.update("println", "kotlin")
+        val ast = highlighter.update("println(", "kotlin")
+
+        assertTrue(ast.tokens.any { it.text == "println" && it.type == TokenType.FUNCTION })
+    }
+
+    @Test
+    fun should_reparseFromMultilineTokenStart_when_commentClosesOnLaterLine() {
+        val highlighter = IncrementalHighlighter()
+
+        highlighter.update("/*\nhello", "kotlin")
+        val ast = highlighter.update("/*\nhello\n*/\nfun test() {}", "kotlin")
+
+        assertTrue(ast.tokens.any { it.text == "/*\nhello\n*/" && it.type == TokenType.COMMENT })
+        assertTrue(ast.tokens.any { it.text == "fun" && it.type == TokenType.KEYWORD })
     }
 
     @Test

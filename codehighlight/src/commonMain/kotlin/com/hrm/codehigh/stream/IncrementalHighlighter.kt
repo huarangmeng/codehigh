@@ -15,6 +15,10 @@ import com.hrm.codehigh.lexer.LanguageRegistry
  */
 internal class IncrementalHighlighter {
 
+    private companion object {
+        private const val CONTEXT_LOOKBACK_CHARS = 64
+    }
+
     /** AST 缓存：key = language + "|" + code */
     private var cachedAst: CodeAst? = null
 
@@ -69,29 +73,12 @@ internal class IncrementalHighlighter {
     private fun incrementalParse(newCode: String, language: String, oldAst: CodeAst): CodeAst {
         val oldCode = oldAst.source
         val appendedStart = oldCode.length
+        val reparseStart = determineReparseStart(oldAst, appendedStart)
+        val stableTokens = oldAst.tokens.takeWhile { it.range.last < reparseStart }
 
-        // 找到最后一个完全在旧代码范围内的稳定 Token
-        val stableTokens = mutableListOf<CodeToken>()
-        for (token in oldAst.tokens) {
-            if (token.range.last < appendedStart) {
-                stableTokens.add(token)
-            } else {
-                break
-            }
-        }
-
-        // 确定重新解析的起始位置（最后一个稳定 Token 的结束位置）
-        val reparseStart = if (stableTokens.isNotEmpty()) {
-            stableTokens.last().range.last + 1
-        } else {
-            0
-        }
-
-        // 对脏区域进行全量解析
         val dirtyCode = newCode.substring(reparseStart)
         val lexer = LanguageRegistry.getOrPlain(language)
         val dirtyTokens = lexer.tokenize(dirtyCode).map { token ->
-            // 调整 Token 的位置偏移
             CodeToken(
                 type = token.type,
                 text = token.text,
@@ -106,6 +93,39 @@ internal class IncrementalHighlighter {
         }
 
         return CodeAst(allTokens, newCode, language)
+    }
+
+    private fun determineReparseStart(oldAst: CodeAst, appendedStart: Int): Int {
+        if (appendedStart == 0) return 0
+
+        val oldCode = oldAst.source
+        val nearbyTokenStart = oldAst.tokens
+            .lastOrNull { it.range.last < appendedStart && appendedStart - it.range.first <= CONTEXT_LOOKBACK_CHARS }
+            ?.range
+            ?.first
+        val unfinishedTokenStart = oldAst.tokens
+            .asReversed()
+            .firstOrNull {
+                it.range.last < appendedStart &&
+                    appendedStart - it.range.first <= CONTEXT_LOOKBACK_CHARS &&
+                    shouldReparseFromTokenStart(it)
+            }
+            ?.range
+            ?.first
+
+        return unfinishedTokenStart ?: nearbyTokenStart ?: 0
+    }
+
+    private fun shouldReparseFromTokenStart(token: CodeToken): Boolean {
+        return when (token.type) {
+            com.hrm.codehigh.ast.TokenType.COMMENT -> token.text.startsWith("/*") && !token.text.endsWith("*/")
+            com.hrm.codehigh.ast.TokenType.STRING -> {
+                (token.text.startsWith("\"\"\"") && !token.text.endsWith("\"\"\"")) ||
+                    (token.text.startsWith("\"") && !token.text.endsWith("\"")) ||
+                    (token.text.startsWith("'") && !token.text.endsWith("'"))
+            }
+            else -> false
+        }
     }
 
     /**

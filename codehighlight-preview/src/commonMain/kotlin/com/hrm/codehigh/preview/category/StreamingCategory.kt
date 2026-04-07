@@ -1,6 +1,8 @@
 package com.hrm.codehigh.preview.category
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ internal fun StreamingCategory() {
     var streamingCode by remember { mutableStateOf("") }
     var isStreaming by remember { mutableStateOf(false) }
     var isCompleted by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     // 模拟流式输出
     LaunchedEffect(isStreaming) {
@@ -36,6 +39,7 @@ internal fun StreamingCategory() {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

@@ -13,12 +13,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,15 +63,8 @@ fun CodeBlock(
     maxVisibleLines: Int? = null,
     onTokenClick: ((CodeToken) -> Unit)? = null
 ) {
-    // 增量高亮引擎（按语言分组，语言变化时重置）
     val highlighter = remember(language) { IncrementalHighlighter() }
 
-    // 增量解析代码
-    val ast by remember(code, language) {
-        derivedStateOf { highlighter.update(code, language) }
-    }
-
-    // 折叠状态
     var isExpanded by remember { mutableStateOf(false) }
     val lines = code.split("\n")
     val totalLines = lines.size
@@ -83,10 +74,7 @@ fun CodeBlock(
         else -> maxVisibleLines // isCollapsible 为 true 时 maxVisibleLines 一定非空
     }
 
-    // 可见行列表
     val visibleLines = lines.take(visibleLineCount)
-
-    // 逐行构建高亮 AnnotatedString（每行单独解析，保证行号与代码行严格对齐）
     val visibleCode = visibleLines.joinToString("\n")
     val visibleAst = remember(visibleCode, language) { highlighter.update(visibleCode, language) }
     val lineHighlights = remember(visibleAst, theme) {
