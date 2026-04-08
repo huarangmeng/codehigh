@@ -52,7 +52,8 @@ public object FenceParser {
 
             // 提取 info string（语言标识符）
             val infoString = trimmed.substring(fenceLen).trim()
-            val language = infoString.split(Regex("\\s+")).firstOrNull()?.trim() ?: ""
+            val language = parseLanguage(infoString)
+            val title = parseTitle(infoString)
             val highlightedLines = parseHighlightedLines(infoString)
             val startLine = parseStartLine(infoString)
 
@@ -85,6 +86,7 @@ public object FenceParser {
             blocks.add(
                 FenceBlock(
                     language = language,
+                    title = title,
                     code = code,
                     isClosed = isClosed,
                     highlightedLines = highlightedLines,
@@ -295,6 +297,19 @@ public object FenceParser {
 
     private fun parseStartLine(infoString: String): Int {
         return extractFenceOption(infoString, "startline")?.toIntOrNull()?.takeIf { it > 0 } ?: 1
+    }
+
+    private fun parseTitle(infoString: String): String {
+        return extractFenceOption(infoString, "title")?.trim().orEmpty()
+    }
+
+    private fun parseLanguage(infoString: String): String {
+        val firstToken = infoString.trim().split(Regex("\\s+"), limit = 2).firstOrNull()?.trim().orEmpty()
+        if (firstToken.isEmpty()) return ""
+        if ('=' in firstToken || firstToken.startsWith('"') || firstToken.startsWith("'") || firstToken.startsWith("{")) {
+            return ""
+        }
+        return firstToken
     }
 
     private fun extractFenceOption(infoString: String, key: String): String? {

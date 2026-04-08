@@ -62,19 +62,29 @@ class FenceParserTest {
     }
 
     @Test
-    fun should_parseFenceOptions_when_hlLinesAndStartlinePresent() {
-        val text = "```kotlin hl_lines=\"1 3-4\" startline=42\nfun hello() {}\nprintln(\"ok\")\nreturn\n}\n```"
+    fun should_parseFenceOptions_when_hlLinesStartlineAndTitlePresent() {
+        val text = "```kotlin title=\"App.kt\" hl_lines=\"1 3-4\" startline=42\nfun hello() {}\nprintln(\"ok\")\nreturn\n}\n```"
         val result = FenceParser.parse(text)
         assertNotNull(result)
         assertEquals("kotlin", result.language)
+        assertEquals("App.kt", result.title)
         assertEquals(setOf(1, 3, 4), result.highlightedLines)
         assertEquals(42, result.startLine)
     }
 
     @Test
+    fun should_parseTitleOnlyOption_withoutTreatingItAsLanguage() {
+        val text = "```title=\"App.kt\"\nfun hello() {}\n```"
+        val result = FenceParser.parse(text)
+        assertNotNull(result)
+        assertEquals("", result.language)
+        assertEquals("App.kt", result.title)
+    }
+
+    @Test
     fun should_parseMultipleFences_when_multipleCodeBlocks() {
         val text = """
-            ```kotlin
+            ```kotlin title="Main.kt"
             fun hello() {}
             ```
             
@@ -86,6 +96,7 @@ class FenceParserTest {
         val results = FenceParser.parseAll(text)
         assertEquals(2, results.size)
         assertEquals("kotlin", results[0].language)
+        assertEquals("Main.kt", results[0].title)
         assertEquals("python", results[1].language)
     }
 

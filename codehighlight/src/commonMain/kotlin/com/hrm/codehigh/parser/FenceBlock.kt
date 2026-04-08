@@ -10,6 +10,7 @@ package com.hrm.codehigh.parser
  */
 public data class FenceBlock(
     val language: String,
+    val title: String = "",
     val code: String,
     val isClosed: Boolean,
     val highlightedLines: Set<Int> = emptySet(),

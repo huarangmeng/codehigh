@@ -57,6 +57,7 @@ import kotlinx.coroutines.delay
 fun CodeBlock(
     code: String,
     language: String = "",
+    title: String = "",
     modifier: Modifier = Modifier,
     isStreaming: Boolean = false,
     theme: CodeTheme = LocalCodeTheme.current,
@@ -90,23 +91,30 @@ fun CodeBlock(
             highlightedLines = highlightedLines
         )
     }
+    val showToolbar = title.isNotBlank() || language.isNotBlank() || showCopyButton
 
     Column(
         modifier = modifier
             .background(theme.background)
             .fillMaxWidth()
     ) {
-        // 顶部工具栏（语言标签 + 复制按钮）
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            LanguageLabel(language = language, theme = theme)
-            if (showCopyButton) {
-                CopyButton(code = code, theme = theme)
+        if (showToolbar) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CodeBlockHeaderLabels(
+                    title = title,
+                    language = language,
+                    theme = theme,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                if (showCopyButton) {
+                    CopyButton(code = code, theme = theme)
+                }
             }
         }
 

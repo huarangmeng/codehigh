@@ -113,6 +113,7 @@ internal fun InteractionCategory() {
             CodeBlock(
                 code = SampleCode.KOTLIN,
                 language = "kotlin",
+                title = "CodeHighDemo.kt",
                 showLineNumbers = showLineNumbers,
                 showCopyButton = showCopyButton,
                 maxVisibleLines = maxVisibleLines,
@@ -122,11 +123,12 @@ internal fun InteractionCategory() {
         }
 
         item {
-            Text("行高亮与起始行号", style = MaterialTheme.typography.titleMedium)
+            Text("标题、行高亮与起始行号", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(8.dp))
             CodeBlock(
                 code = SampleCode.KOTLIN,
                 language = "kotlin",
+                title = "feature/highlight-title.kt",
                 showLineNumbers = true,
                 startLine = 100,
                 highlightedLines = setOf(2, 4, 5),

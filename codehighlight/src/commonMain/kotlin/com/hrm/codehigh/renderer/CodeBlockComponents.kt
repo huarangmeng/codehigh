@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hrm.codehigh.theme.CodeTheme
@@ -46,6 +47,44 @@ internal fun LineNumberColumn(
     }
 }
 
+@Composable
+internal fun CodeBlockHeaderLabels(
+    title: String,
+    language: String,
+    theme: CodeTheme,
+    modifier: Modifier = Modifier
+) {
+    if (title.isBlank() && language.isBlank()) return
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        CodeBlockTitle(title = title, theme = theme)
+        LanguageLabel(language = language, theme = theme)
+    }
+}
+
+@Composable
+internal fun CodeBlockTitle(
+    title: String,
+    theme: CodeTheme,
+    modifier: Modifier = Modifier
+) {
+    if (title.isBlank()) return
+
+    BasicText(
+        text = title,
+        style = TextStyle(
+            color = theme.colorFor(com.hrm.codehigh.ast.TokenType.PLAIN).copy(alpha = 0.92f),
+            fontSize = 12.sp,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Medium
+        ),
+        modifier = modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+    )
+}
+
 /**
  * 语言标签组件，显示代码语言名称。
  * 标记为 internal，仅供 CodeBlock 内部使用。
@@ -56,7 +95,8 @@ internal fun LineNumberColumn(
 @Composable
 internal fun LanguageLabel(
     language: String,
-    theme: CodeTheme
+    theme: CodeTheme,
+    modifier: Modifier = Modifier
 ) {
     if (language.isBlank()) return
 
@@ -67,6 +107,6 @@ internal fun LanguageLabel(
             fontSize = 11.sp,
             fontFamily = FontFamily.Monospace
         ),
-        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        modifier = modifier.padding(horizontal = 8.dp, vertical = 4.dp)
     )
 }
