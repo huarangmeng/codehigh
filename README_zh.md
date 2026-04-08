@@ -142,26 +142,43 @@ fun MyScreen() {
 
 ### 行内代码
 
-用于文本中的行内代码高亮：
+用于文本中的行内代码，默认样式继续保持单一 style 入口，并恢复更清晰的前景/背景对比：亮色主题使用 `#F6F8FA`，暗色主题使用 `#30363D`，文字继续沿用主题的普通代码色。
 
 ```kotlin
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hrm.codehigh.renderer.InlineCode
+import com.hrm.codehigh.renderer.InlineCodeDefaults
 
 @Composable
 fun MyText() {
-    InlineCode(
-        text = "val x = 42"
-    )
+    val baseStyle = InlineCodeDefaults.style()
+    val customInlineCodeStyle = remember(baseStyle) {
+        baseStyle.copy(
+            textStyle = baseStyle.textStyle.copy(fontSize = 14.sp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
+        )
+    }
+
+    InlineCode(text = "README.md")
+    InlineCode(text = "notes", style = customInlineCodeStyle)
 }
 ```
 
 ### 测量行内代码尺寸
 
-在需要预先占位或调整布局时，可以使用测量 API 计算行内代码的宽高：
+在需要预先占位或调整布局时，可以使用测量 API 计算行内代码的宽高，并直接复用同一个 style 入口：
 
 ```kotlin
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.hrm.codehigh.renderer.InlineCodeDefaults
 import com.hrm.codehigh.renderer.measureInlineCodeSize
 import com.hrm.codehigh.theme.OneDarkProTheme
 
@@ -169,26 +186,29 @@ import com.hrm.codehigh.theme.OneDarkProTheme
 fun MeasureExample() {
     val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
-    val theme = OneDarkProTheme
-    
-    val size = remember {
-        measureInlineCodeSize(
-            text = "val x = 42",
-            language = "kotlin",
-            theme = theme,
-            density = density,
-            textMeasurer = textMeasurer
+    val inlineCodeStyle = remember {
+        val baseStyle = InlineCodeDefaults.style(OneDarkProTheme)
+        baseStyle.copy(
+            textStyle = baseStyle.textStyle.copy(fontSize = 14.sp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
         )
     }
-    
-    // 使用测量结果进行布局
+
+    val size = remember(inlineCodeStyle) {
+        measureInlineCodeSize(
+            text = "README.md",
+            language = "kotlin",
+            style = inlineCodeStyle,
+            density = density,
+            textMeasurer = textMeasurer,
+        )
+    }
+
     Box(
         Modifier
             .width(size.widthDp(density).dp)
             .height(size.heightDp(density).dp)
-    ) {
-        // 占位或其他内容
-    }
+    )
 }
 ```
 

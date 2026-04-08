@@ -365,8 +365,8 @@
 - ✅ Token 长按回调（`onTokenClick(token: CodeToken)`，传递 Token 类型、文本和位置）
 
 #### InlineCode 组件（`public`）
-- ✅ `InlineCode(text, theme)` 行内代码组件
-- ✅ 等宽字体、背景色与 `CodeTheme.background` 联动
+- ✅ `InlineCode(text, style)` 行内代码组件
+- ✅ 主题与外观统一收敛到 `InlineCodeStyle`
 - ✅ 适配行内文本流排版
 
 #### AnnotatedString 构建

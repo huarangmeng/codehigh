@@ -142,26 +142,43 @@ fun MyScreen() {
 
 ### Inline Code
 
-For inline code highlighting within text:
+For inline code within text, the default style stays close to GitHub while restoring clearer foreground/background contrast: light themes use `#F6F8FA`, dark themes use `#30363D`, and text keeps the theme plain color.
 
 ```kotlin
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hrm.codehigh.renderer.InlineCode
+import com.hrm.codehigh.renderer.InlineCodeDefaults
 
 @Composable
 fun MyText() {
-    InlineCode(
-        text = "val x = 42"
-    )
+    val baseStyle = InlineCodeDefaults.style()
+    val customInlineCodeStyle = remember(baseStyle) {
+        baseStyle.copy(
+            textStyle = baseStyle.textStyle.copy(fontSize = 14.sp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
+        )
+    }
+
+    InlineCode(text = "README.md")
+    InlineCode(text = "notes", style = customInlineCodeStyle)
 }
 ```
 
 ### Measuring Inline Code Size
 
-When you need to pre-occupy space or adjust layout, use the measurement API to calculate the width and height of inline code:
+When you need to pre-occupy space or adjust layout, use the measurement API and reuse the same style entry:
 
 ```kotlin
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.hrm.codehigh.renderer.InlineCodeDefaults
 import com.hrm.codehigh.renderer.measureInlineCodeSize
 import com.hrm.codehigh.theme.OneDarkProTheme
 
@@ -169,26 +186,29 @@ import com.hrm.codehigh.theme.OneDarkProTheme
 fun MeasureExample() {
     val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
-    val theme = OneDarkProTheme
-    
-    val size = remember {
-        measureInlineCodeSize(
-            text = "val x = 42",
-            language = "kotlin",
-            theme = theme,
-            density = density,
-            textMeasurer = textMeasurer
+    val inlineCodeStyle = remember {
+        val baseStyle = InlineCodeDefaults.style(OneDarkProTheme)
+        baseStyle.copy(
+            textStyle = baseStyle.textStyle.copy(fontSize = 14.sp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
         )
     }
-    
-    // Use measurement result for layout
+
+    val size = remember(inlineCodeStyle) {
+        measureInlineCodeSize(
+            text = "README.md",
+            language = "kotlin",
+            style = inlineCodeStyle,
+            density = density,
+            textMeasurer = textMeasurer,
+        )
+    }
+
     Box(
         Modifier
             .width(size.widthDp(density).dp)
             .height(size.heightDp(density).dp)
-    ) {
-        // Placeholder or other content
-    }
+    )
 }
 ```
 

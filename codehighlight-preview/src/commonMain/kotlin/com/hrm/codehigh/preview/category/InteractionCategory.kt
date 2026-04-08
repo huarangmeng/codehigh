@@ -10,12 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hrm.codehigh.ast.CodeToken
 import com.hrm.codehigh.preview.data.SampleCode
 import com.hrm.codehigh.renderer.CodeBlock
 import com.hrm.codehigh.renderer.InlineCode
+import com.hrm.codehigh.renderer.InlineCodeDefaults
 import com.hrm.codehigh.renderer.measureInlineCodeSize
 import com.hrm.codehigh.theme.LocalCodeTheme
+import kotlin.math.round
 
 /**
  * 交互功能分类，演示复制按钮、行号切换、代码折叠、Token 点击等功能。
@@ -29,6 +32,15 @@ internal fun InteractionCategory() {
     val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
     val theme = LocalCodeTheme.current
+    val inlineCodeStyle = remember(theme) { InlineCodeDefaults.style(theme) }
+    val customInlineCodeStyle = remember(theme) {
+        inlineCodeStyle.copy(
+            textStyle = inlineCodeStyle.textStyle.copy(
+                fontSize = 14.sp,
+            ),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 3.dp),
+        )
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -149,16 +161,61 @@ internal fun InteractionCategory() {
             )
         }
 
-        // 行内代码尺寸测量示例
         item {
-            val inlineCodeText = remember { "val answer = 42" }
-            val inlineCodeSize = remember(inlineCodeText, theme) {
+            Text("行内代码默认样式", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text("默认样式现在试用你给的这套配色：日间模式是 #F5F7FA 底、#2E3440 字，夜间模式是 #2A2F3A 底、#ECEFF4 字，并补上一圈 1dp 细边框。")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text("例如")
+                        InlineCode(text = "README.md")
+                        Text("和")
+                        InlineCode(text = "draft")
+                        Text("会更接近中性色标签，观感更干净，也更容易融入正文。")
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text("命令行片段")
+                        InlineCode(text = "git status")
+                        Text("、")
+                        InlineCode(text = "git add .")
+                        Text("与")
+                        InlineCode(text = "git commit")
+                        Text("现在会更偏克制、清爽的默认风格，而不是带明显情绪色的标签。")
+                    }
+                    Text("也可以继续通过一个 style 统一控制字号、留白与测量结果：")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text("比如")
+                        InlineCode(text = "notes", style = customInlineCodeStyle)
+                        Text("与")
+                        InlineCode(text = "todo", style = customInlineCodeStyle)
+                        Text("可以共享一套外部样式。")
+                    }
+                }
+            }
+        }
+
+        item {
+            val inlineCodeText = remember { "README.md" }
+            val inlineCodeSize = remember(inlineCodeText, customInlineCodeStyle) {
                 measureInlineCodeSize(
                     text = inlineCodeText,
                     language = "kotlin",
-                    theme = theme,
+                    style = customInlineCodeStyle,
                     density = density,
-                    textMeasurer = textMeasurer
+                    textMeasurer = textMeasurer,
                 )
             }
 
@@ -168,10 +225,7 @@ internal fun InteractionCategory() {
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text("行内代码尺寸测量示例", style = MaterialTheme.typography.titleSmall)
-                    
-                    Text("以下展示了如何在渲染前预先测量行内代码的尺寸：")
-                    
-                    // 显示测量结果
+                    Text("以下展示了如何在渲染前预先测量行内代码的尺寸，并直接复用同一个 style：")
                     Card(
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer
@@ -180,14 +234,12 @@ internal fun InteractionCategory() {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text("测量结果：", style = MaterialTheme.typography.labelMedium)
                             Text("代码: ")
-                            InlineCode(text = inlineCodeText)
+                            InlineCode(text = inlineCodeText, style = customInlineCodeStyle)
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text("宽度: ${inlineCodeSize.width}px (${"%.2f".format(inlineCodeSize.widthDp(density))}dp)")
-                            Text("高度: ${inlineCodeSize.height}px (${"%.2f".format(inlineCodeSize.heightDp(density))}dp)")
+                            Text("宽度: ${inlineCodeSize.width}px (${formatDpValue(inlineCodeSize.widthDp(density))}dp)")
+                            Text("高度: ${inlineCodeSize.height}px (${formatDpValue(inlineCodeSize.heightDp(density))}dp)")
                         }
                     }
-                    
-                    // 使用测量结果进行占位
                     Text("使用测量结果占位的示例：")
                     Box(
                         modifier = Modifier
@@ -198,10 +250,11 @@ internal fun InteractionCategory() {
                     ) {
                         Text("占位区域", style = MaterialTheme.typography.bodySmall)
                     }
-                    
                     Text("占位区域尺寸与实际行内代码尺寸完全一致！")
                 }
             }
         }
     }
 }
+
+private fun formatDpValue(value: Float): String = (round(value * 100f) / 100f).toString()
