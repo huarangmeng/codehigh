@@ -14,6 +14,11 @@ import com.hrm.codehigh.lexer.LanguageRegistry
  * 3. 相同代码字符串和语言命中 AST 缓存，直接返回缓存结果
  */
 internal class IncrementalHighlighter {
+    data class UpdateResult(
+        val ast: CodeAst,
+        val firstChangedLine: Int,
+        val reparseStart: Int,
+    )
 
     private companion object {
         private const val CONTEXT_LOOKBACK_CHARS = 64
@@ -33,6 +38,10 @@ internal class IncrementalHighlighter {
      * @return 更新后的 CodeAst
      */
     fun update(code: String, language: String): CodeAst {
+        return updateDetailed(code, language).ast
+    }
+
+    fun updateDetailed(code: String, language: String): UpdateResult {
         // 语言变化时触发全量重新解析
         if (language != lastLanguage) {
             lastLanguage = language
@@ -42,20 +51,28 @@ internal class IncrementalHighlighter {
         val cached = cachedAst
         // 命中缓存
         if (cached != null && cached.source == code && cached.language == language) {
-            return cached
+            return UpdateResult(
+                ast = cached,
+                firstChangedLine = 0,
+                reparseStart = 0,
+            )
         }
 
         // 尝试增量更新
-        val newAst = if (cached != null && code.startsWith(cached.source)) {
+        val update = if (cached != null && code.startsWith(cached.source)) {
             // 代码是旧代码的扩展（追加场景）
             incrementalParse(code, language, cached)
         } else {
             // 全量解析
-            fullParse(code, language)
+            UpdateResult(
+                ast = fullParse(code, language),
+                firstChangedLine = 0,
+                reparseStart = 0,
+            )
         }
 
-        cachedAst = newAst
-        return newAst
+        cachedAst = update.ast
+        return update
     }
 
     /**
@@ -70,10 +87,12 @@ internal class IncrementalHighlighter {
     /**
      * 增量解析：复用稳定前缀，仅重新解析尾部脏区域。
      */
-    private fun incrementalParse(newCode: String, language: String, oldAst: CodeAst): CodeAst {
+    private fun incrementalParse(newCode: String, language: String, oldAst: CodeAst): UpdateResult {
         val oldCode = oldAst.source
         val appendedStart = oldCode.length
-        val reparseStart = determineReparseStart(oldAst, appendedStart)
+        val tokenStart = determineReparseStart(oldAst, appendedStart)
+        val lineStart = oldCode.lastIndexOf('\n', (tokenStart - 1).coerceAtLeast(0)).let { if (it == -1) 0 else it + 1 }
+        val reparseStart = lineStart
         val stableTokens = oldAst.tokens.takeWhile { it.range.last < reparseStart }
 
         val dirtyCode = newCode.substring(reparseStart)
@@ -92,7 +111,11 @@ internal class IncrementalHighlighter {
             dirtyTokens
         }
 
-        return CodeAst(allTokens, newCode, language)
+        return UpdateResult(
+            ast = CodeAst(allTokens, newCode, language),
+            firstChangedLine = newCode.countLinesBefore(reparseStart),
+            reparseStart = reparseStart,
+        )
     }
 
     private fun determineReparseStart(oldAst: CodeAst, appendedStart: Int): Int {
@@ -135,4 +158,14 @@ internal class IncrementalHighlighter {
         cachedAst = null
         lastLanguage = ""
     }
+}
+
+private fun String.countLinesBefore(charIndex: Int): Int {
+    if (charIndex <= 0) return 0
+    val end = charIndex.coerceAtMost(length)
+    var count = 0
+    for (i in 0 until end) {
+        if (this[i] == '\n') count++
+    }
+    return count
 }

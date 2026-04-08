@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,12 +17,15 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -88,10 +89,37 @@ fun CodeBlock(
             tokens = visibleAst.tokens,
             theme = theme,
             language = language,
-            highlightedLines = highlightedLines
+            highlightedLines = highlightedLines,
         )
     }
+    val fallbackToPlainLines = remember(lineHighlights, visibleLines) {
+        visibleLines.isNotEmpty() && (
+            lineHighlights.isEmpty() ||
+                lineHighlights.size < visibleLines.size ||
+                lineHighlights.all { it.text.text.isBlank() }
+            )
+    }
     val showToolbar = title.isNotBlank() || language.isNotBlank() || showCopyButton
+    val density = LocalDensity.current
+    val codeLineHeight = 20.sp
+    val codeLineHeightDp = with(density) { codeLineHeight.toDp() }
+    val lineNumberStyle = remember(theme) {
+        TextStyle(
+            color = theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT).copy(alpha = 0.5f),
+            fontSize = 13.sp,
+            fontFamily = FontFamily.Monospace,
+            lineHeight = codeLineHeight,
+            textAlign = androidx.compose.ui.text.style.TextAlign.End
+        )
+    }
+    val diffMarkerStyle = remember(theme) {
+        TextStyle(
+            fontSize = 13.sp,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold,
+            lineHeight = codeLineHeight
+        )
+    }
 
     Column(
         modifier = modifier
@@ -128,71 +156,78 @@ fun CodeBlock(
             Column(
                 modifier = Modifier.padding(vertical = 8.dp)
             ) {
-                lineHighlights.forEachIndexed { index, lineRender ->
-                    val isLastLine = index == lineHighlights.lastIndex
-                    val diffMarker = diffMarkerForLine(lineRender.kind)
-                    Row(
-                        modifier = Modifier
-                            .height(IntrinsicSize.Min),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (showLineNumbers) {
-                            BasicText(
-                                text = (startLine + index).toString(),
-                                style = TextStyle(
-                                    color = theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT).copy(alpha = 0.5f),
-                                    fontSize = 13.sp,
-                                    fontFamily = FontFamily.Monospace,
-                                    lineHeight = 20.sp,
-                                    textAlign = androidx.compose.ui.text.style.TextAlign.End
-                                ),
-                                modifier = Modifier
-                                    .width(40.dp)
-                                    .padding(end = 8.dp),
-                                maxLines = 1
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .width(1.dp)
-                                    .fillMaxHeight()
-                                    .background(
-                                        theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT)
-                                            .copy(alpha = 0.3f)
-                                    )
-                            )
+                val renderedLines = if (fallbackToPlainLines) {
+                    visibleLines.map { line ->
+                        CodeLineRender(
+                            kind = CodeLineKind.NORMAL,
+                            text = AnnotatedString(line),
+                        )
+                    }
+                } else {
+                    lineHighlights
+                }
+                renderedLines.forEachIndexed { index, lineRender ->
+                    key(index) {
+                        val isLastLine = index == renderedLines.lastIndex
+                        val diffMarker = diffMarkerForLine(lineRender.kind)
+                        val rawLine = visibleLines.getOrElse(index) { "" }
+                        val displayText = if (lineRender.text.text.isEmpty() && rawLine.isNotEmpty()) {
+                            AnnotatedString(rawLine)
+                        } else {
+                            lineRender.text
                         }
-
                         Row(
-                            modifier = Modifier
-                                .background(theme.backgroundForLine(lineRender.kind))
-                                .padding(horizontal = 12.dp),
-                            verticalAlignment = Alignment.Bottom
+                            modifier = Modifier.height(codeLineHeightDp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (diffMarker != null) {
+                            if (showLineNumbers) {
                                 BasicText(
-                                    text = diffMarker,
-                                    style = TextStyle(
-                                        color = theme.diffMarkerColorForLine(lineRender.kind),
-                                        fontSize = 13.sp,
-                                        fontFamily = FontFamily.Monospace,
-                                        fontWeight = FontWeight.Bold,
-                                        lineHeight = 20.sp
-                                    ),
+                                    text = (startLine + index).toString(),
+                                    style = lineNumberStyle,
                                     modifier = Modifier
-                                        .background(theme.diffMarkerBackgroundForLine(lineRender.kind))
-                                        .padding(horizontal = 6.dp)
+                                        .width(40.dp)
+                                        .padding(end = 8.dp),
+                                    maxLines = 1
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .width(1.dp)
+                                        .height(codeLineHeightDp)
+                                        .background(
+                                            theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT)
+                                                .copy(alpha = 0.3f)
+                                        )
+                                )
                             }
-                            BasicText(
-                                text = lineRender.text,
-                                style = theme.textStyleForLine(lineRender.kind)
-                            )
-                            if (isLastLine) {
-                                StreamingCursor(
-                                    isStreaming = isStreaming,
-                                    color = theme.colorFor(com.hrm.codehigh.ast.TokenType.PLAIN)
+
+                            Row(
+                                modifier = Modifier
+                                    .background(theme.backgroundForLine(lineRender.kind))
+                                    .padding(horizontal = 12.dp),
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                if (diffMarker != null) {
+                                    BasicText(
+                                        text = diffMarker,
+                                        style = diffMarkerStyle.copy(
+                                            color = theme.diffMarkerColorForLine(lineRender.kind)
+                                        ),
+                                        modifier = Modifier
+                                            .background(theme.diffMarkerBackgroundForLine(lineRender.kind))
+                                            .padding(horizontal = 6.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                }
+                                BasicText(
+                                    text = displayText,
+                                    style = theme.textStyleForLine(lineRender.kind)
                                 )
+                                if (isLastLine) {
+                                    StreamingCursor(
+                                        isStreaming = isStreaming,
+                                        color = theme.colorFor(com.hrm.codehigh.ast.TokenType.PLAIN)
+                                    )
+                                }
                             }
                         }
                     }
@@ -261,6 +296,7 @@ private fun CodeTheme.textStyleForLine(kind: CodeLineKind) = when (kind) {
         lineHeight = 20.sp
     )
     else -> TextStyle(
+        color = textColorForLine(kind),
         fontSize = 13.sp,
         fontFamily = FontFamily.Monospace,
         lineHeight = 20.sp

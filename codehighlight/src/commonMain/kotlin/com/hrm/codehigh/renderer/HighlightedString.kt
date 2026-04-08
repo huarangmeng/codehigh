@@ -54,13 +54,38 @@ internal fun buildLineRenders(
     language: String = "",
     highlightedLines: Set<Int> = emptySet()
 ): List<CodeLineRender> {
+    return buildLineRendersFromOffset(
+        sourceLines = sourceLines,
+        tokens = tokens,
+        theme = theme,
+        language = language,
+        highlightedLines = highlightedLines,
+        startLineIndex = 0,
+        startCharOffset = 0,
+    )
+}
+
+internal fun buildLineRendersFromOffset(
+    sourceLines: List<String>,
+    tokens: List<CodeToken>,
+    theme: CodeTheme,
+    language: String = "",
+    highlightedLines: Set<Int> = emptySet(),
+    startLineIndex: Int,
+    startCharOffset: Int,
+): List<CodeLineRender> {
+    val visibleSourceLines = sourceLines.drop(startLineIndex)
+    if (visibleSourceLines.isEmpty()) return emptyList()
+
+    val visibleTokens = tokens.toRelativeTokens(startCharOffset)
+
     // 将所有 token 文本拼接后按 \n 拆分，重新映射到每行
     // 策略：先构建整体 AnnotatedString，再按换行符切割
-    val full = buildHighlightedString(tokens, theme)
+    val full = buildHighlightedString(visibleTokens, theme)
     val result = mutableListOf<AnnotatedString>()
     var offset = 0
-    for (i in sourceLines.indices) {
-        val lineLen = sourceLines[i].length
+    for (i in visibleSourceLines.indices) {
+        val lineLen = visibleSourceLines[i].length
         val end = (offset + lineLen).coerceAtMost(full.length)
         result.add(
             if (offset <= full.length) full.subSequence(offset, end) as AnnotatedString
@@ -73,13 +98,34 @@ internal fun buildLineRenders(
         CodeLineRender(
             text = line,
             kind = resolveLineKind(
-                lineIndex = index,
-                lineText = sourceLines.getOrElse(index) { "" },
+                lineIndex = startLineIndex + index,
+                lineText = visibleSourceLines.getOrElse(index) { "" },
                 language = language,
                 highlightedLines = highlightedLines
             )
         )
     }
+}
+
+private fun List<CodeToken>.toRelativeTokens(startCharOffset: Int): List<CodeToken> {
+    if (startCharOffset <= 0) return this
+    val result = ArrayList<CodeToken>(size)
+    for (token in this) {
+        if (token.range.last < startCharOffset) continue
+        val cut = (startCharOffset - token.range.first).coerceAtLeast(0)
+        val text = if (cut == 0) token.text else token.text.drop(cut)
+        if (text.isEmpty()) continue
+        val start = (token.range.first - startCharOffset).coerceAtLeast(0)
+        val end = start + text.length - 1
+        result.add(
+            CodeToken(
+                type = token.type,
+                text = text,
+                range = start..end,
+            )
+        )
+    }
+    return result
 }
 
 /**

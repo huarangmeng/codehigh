@@ -19,7 +19,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 internal fun StreamingCursor(
     isStreaming: Boolean,
-    color: Color = Color.White
+    color: Color = Color.White,
+    modifier: Modifier = Modifier,
 ) {
     if (!isStreaming) return
 
@@ -35,7 +36,7 @@ internal fun StreamingCursor(
     )
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(2.dp)
             .height(16.dp)
             .background(color.copy(alpha = alpha))
