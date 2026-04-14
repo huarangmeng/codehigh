@@ -5,7 +5,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 
 data class InlineCodeSize(
     val width: Float,
@@ -32,6 +34,7 @@ fun measureInlineCodeSize(
         density = density,
         maxWidth = maxWidth,
         contentPadding = style.contentPadding,
+        borderWidth = style.borderWidth,
         textMeasurer = textMeasurer,
     )
 }
@@ -42,6 +45,7 @@ internal fun measureAnnotatedStringSize(
     density: Density,
     maxWidth: Float,
     contentPadding: PaddingValues,
+    borderWidth: Dp = 0.dp,
     textMeasurer: androidx.compose.ui.text.TextMeasurer,
 ): InlineCodeSize {
     with(density) {
@@ -51,12 +55,16 @@ internal fun measureAnnotatedStringSize(
         val verticalPaddingPx =
             contentPadding.calculateTopPadding().toPx() +
                 contentPadding.calculateBottomPadding().toPx()
+        val horizontalBorderPx = borderWidth.toPx() * 2f
+        val verticalBorderPx = borderWidth.toPx() * 2f
+        val horizontalDecorationPx = horizontalPaddingPx + horizontalBorderPx
+        val verticalDecorationPx = verticalPaddingPx + verticalBorderPx
 
-        val maxWidthWithoutPadding = maxWidth - horizontalPaddingPx
+        val maxWidthWithoutDecoration = maxWidth - horizontalDecorationPx
 
-        val constraints = if (maxWidthWithoutPadding.isFinite() && maxWidthWithoutPadding > 0) {
+        val constraints = if (maxWidthWithoutDecoration.isFinite() && maxWidthWithoutDecoration > 0) {
             androidx.compose.ui.unit.Constraints(
-                maxWidth = maxWidthWithoutPadding.toInt(),
+                maxWidth = maxWidthWithoutDecoration.toInt(),
             )
         } else {
             androidx.compose.ui.unit.Constraints()
@@ -71,8 +79,8 @@ internal fun measureAnnotatedStringSize(
         )
 
         return InlineCodeSize(
-            width = layoutResult.size.width + horizontalPaddingPx,
-            height = layoutResult.size.height + verticalPaddingPx,
+            width = layoutResult.size.width + horizontalDecorationPx,
+            height = layoutResult.size.height + verticalDecorationPx,
         )
     }
 }

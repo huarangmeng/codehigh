@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hrm.codehigh.ast.TokenType
 import com.hrm.codehigh.theme.CodeTheme
 import com.hrm.codehigh.theme.LocalCodeTheme
 
@@ -30,13 +31,13 @@ object InlineCodeDefaults {
     fun style(theme: CodeTheme): InlineCodeStyle = InlineCodeStyle(
         theme = theme,
         textStyle = TextStyle(
-            color = if (theme.isDark) Color(0xFFECEFF4) else Color(0xFF2E3440),
+            color = theme.colorFor(TokenType.PLAIN),
             fontSize = 13.sp,
             lineHeight = 20.sp,
             fontFamily = FontFamily.Monospace,
         ),
-        containerColor = if (theme.isDark) Color(0xFF2A2F3A) else Color(0xFFF5F7FA),
-        borderColor = if (theme.isDark) Color(0xFF3B4252) else Color(0xFFE2E8F0),
+        containerColor = if (theme.isDark) Color(0xFF30363D) else Color(0xFFF6F8FA),
+        borderColor = if (theme.isDark) Color(0xFF3D444D) else Color(0xFFD0D7DE),
         borderWidth = 1.dp,
         shape = RoundedCornerShape(4.dp),
         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp),

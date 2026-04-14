@@ -142,7 +142,7 @@ fun MyScreen() {
 
 ### Inline Code
 
-For inline code within text, the default style stays close to GitHub while restoring clearer foreground/background contrast: light themes use `#F6F8FA`, dark themes use `#30363D`, and text keeps the theme plain color.
+For inline code within text, the default style follows a single `InlineCodeStyle` contract: light themes use a `#F6F8FA` background with a `#D0D7DE` 1dp border, dark themes use a `#30363D` background with a `#3D444D` 1dp border, and text keeps the theme plain color. The border is part of the component style contract, so rendering and measurement stay aligned as long as you reuse the same style.
 
 ```kotlin
 import androidx.compose.foundation.layout.PaddingValues
@@ -169,7 +169,7 @@ fun MyText() {
 
 ### Measuring Inline Code Size
 
-When you need to pre-occupy space or adjust layout, use the measurement API and reuse the same style entry:
+When you need to pre-occupy space or adjust layout, use the measurement API with the exact same `InlineCodeStyle` that you pass to `InlineCode`. The measured size already includes the style's padding and border, so you can reuse it directly for placeholders or constrained layout slots:
 
 ```kotlin
 import androidx.compose.foundation.layout.PaddingValues
@@ -211,6 +211,8 @@ fun MeasureExample() {
     )
 }
 ```
+
+Avoid wrapping `InlineCode` in an extra outer border unless you also account for that added decoration in your own layout. The built-in measurement API only guarantees consistency for the style contract declared in `InlineCodeStyle`.
 
 ### Streaming Mode (For AI Chat/Real-time Output)
 

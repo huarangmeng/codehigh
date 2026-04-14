@@ -142,7 +142,7 @@ fun MyScreen() {
 
 ### 行内代码
 
-用于文本中的行内代码，默认样式继续保持单一 style 入口，并恢复更清晰的前景/背景对比：亮色主题使用 `#F6F8FA`，暗色主题使用 `#30363D`，文字继续沿用主题的普通代码色。
+用于文本中的行内代码，默认样式遵循单一的 `InlineCodeStyle` 协议：亮色主题使用 `#F6F8FA` 背景和 `#D0D7DE` 的 1dp 边框，暗色主题使用 `#30363D` 背景和 `#3D444D` 的 1dp 边框，文字继续沿用主题的普通代码色。边框属于组件样式协议的一部分，因此只要测量和渲染复用同一份 style，二者就会保持一致。
 
 ```kotlin
 import androidx.compose.foundation.layout.PaddingValues
@@ -169,7 +169,7 @@ fun MyText() {
 
 ### 测量行内代码尺寸
 
-在需要预先占位或调整布局时，可以使用测量 API 计算行内代码的宽高，并直接复用同一个 style 入口：
+在需要预先占位或调整布局时，可以使用测量 API 计算行内代码的宽高，并传入与 `InlineCode` 完全相同的 `InlineCodeStyle`。测量结果已经包含该 style 的 padding 和 border，因此可以直接用于占位或受约束布局：
 
 ```kotlin
 import androidx.compose.foundation.layout.PaddingValues
@@ -211,6 +211,8 @@ fun MeasureExample() {
     )
 }
 ```
+
+如果你在 `InlineCode` 外层额外再包一层自己的边框或其它装饰，需要由外部自己把这部分尺寸补进布局；内置测量 API 只保证 `InlineCodeStyle` 协议内的尺寸与渲染一致。
 
 ### 流式模式（适用于 AI 对话/实时输出）
 
