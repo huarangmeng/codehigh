@@ -13,11 +13,10 @@ A high-performance cross-platform code highlighting library developed based on K
 ## 🌟 Key Features
 
 - **Multi-platform Consistency**: Uses Compose Multiplatform for consistent code highlighting on Android, iOS, Desktop (JVM), and Web (Wasm/JS).
-- **28+ Programming Languages**: Built-in support for Kotlin, Java, Swift, Python, JavaScript, TypeScript, Ruby, PHP, Dart, Scala, Go, Rust, C, C++, R, SQL, JSON, YAML, TOML, Dockerfile, Bash, Lua, Haskell, Elixir, XML, HTML, CSS, Markdown, and more.
+- **28+ Programming Languages**: Built-in support for Kotlin, Java, Swift, Python, JavaScript, TypeScript, Ruby, PHP, Dart, Scala, Go, Rust, C, C++, R, SQL, JSON, YAML, TOML, Dockerfile, Bash, Lua, Haskell, Elixir, XML, HTML, CSS, Diff, and more.
 - **Incremental Highlighting**: AST-based incremental parsing and highlighting for efficient updates in streaming scenarios (e.g., AI chat, real-time editing).
 - **Rich Themes**: 4 built-in themes including One Dark Pro, GitHub Light, Dracula Pro, and Solarized Light, with custom theme support.
 - **Code Block Components**: Complete code block rendering with line numbers, configurable start lines, highlighted lines, diff mode, copy button, language label, collapsible/expandable, and streaming cursor animation.
-- **Markdown Fence Parser**: Built-in parser for Markdown code fence blocks.
 - **Custom Lexer Support**: Extensible lexer API for adding support for additional programming languages.
 - **Token Click Interaction**: Click callback for individual code tokens for interactive features.
 - **Light/Dark Themes**: Built-in light and dark themes with explicit selection and custom theme support.
@@ -67,12 +66,12 @@ A high-performance cross-platform code highlighting library developed based on K
 </details>
 
 <details>
-<summary><b>Markup/Style Languages</b> — Bash, XML, HTML, CSS, Markdown</summary>
+<summary><b>Markup/Style/Diff Languages</b> — Bash, XML, HTML, CSS, Diff</summary>
 
 - **Bash/Shell**: keywords, strings, comments, variables, commands
 - **XML/HTML**: tags, attributes, strings, comments, entities
 - **CSS**: selectors, properties, values, comments, at-rules
-- **Markdown**: headers, lists, links, code spans, block quotes, etc.
+- **Diff/Patch**: file headers, hunk markers, added/removed lines, and patch metadata
 </details>
 
 ## 🎨 Built-in Themes (4)
@@ -309,7 +308,7 @@ CodeBlock(
 
 ## 🏗️ Project Structure
 
-- `:codehighlight`: Core SDK module, containing lexers, parser, renderer, themes, and incremental highlighting.
+- `:codehighlight`: Core SDK module, containing lexers, renderer, themes, and incremental highlighting.
 - `:codehighlight-preview`: Preview components and sample datasets.
 - `:composeApp`: Cross-platform Demo application.
 - `:androidApp`: Android Demo application.
@@ -336,6 +335,7 @@ For a detailed list of supported features, please refer to: [HIGHLIGHTER_COVERAG
 
 ## 💡 Recommended
 
+- [Markdown](https://github.com/huarangmeng/Markdown) — A dedicated Kotlin Multiplatform Markdown parsing and rendering library by the same author. If you need Markdown parsing or rendering, use it alongside `codehigh`.
 - [LaTeX](https://github.com/huarangmeng/LaTeX) — A Kotlin Multiplatform LaTeX parsing and rendering library by the same author. If you need both code highlighting and LaTeX rendering in your project, check it out!
 
 ## 📄 License

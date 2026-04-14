@@ -1,5 +1,7 @@
 # CodeHigh 代码高亮模块功能覆盖分析
 
+> 说明：自 2026-04-14 起，Markdown 相关职责已明确移出 `codehigh` 的项目边界，相关能力由独立的 `Markdown` 项目承接。本文中与 Markdown 相关的内容仅保留为边界说明或历史记录，不再视为当前 SDK 能力。
+
 ## 1. Token 类型体系（`ast/`）
 
 ### ✅ 已实现
@@ -270,7 +272,7 @@
 
 ---
 
-## 8. 语言支持 — 标记/样式语言（`lexer/`）
+## 8. 语言支持 — 标记/样式/差异语言（`lexer/`）
 
 ### ✅ 已实现
 
@@ -299,49 +301,21 @@
 - ✅ At 规则（`@media`、`@keyframes`、`@import`、`@font-face`、`@supports`）
 - ✅ 变量（`--custom-property`）
 
-#### Markdown
-- ✅ 标题（`#`、`##`、`###` 等 ATX 标题）
-- ✅ 粗体（`**text**`）、斜体（`*text*`）
-- ✅ 行内代码（`` `code` ``）
-- ✅ 代码围栏（` ``` `）
-- ✅ 链接（`[text](url)`）、图片（`![alt](url)`）
-- ✅ 列表标记（`-`、`*`、`+`、`1.`）
-- ✅ 引用块（`>`）
-- ✅ 分隔线（`---`、`***`）
+#### Diff / Patch
+- ✅ 文件头（`diff --git`、`index`）
+- ✅ hunk 标记（`@@ -1,2 +1,2 @@`）
+- ✅ 文件路径头（`+++`、`---`）
+- ✅ 新增/删除行前缀（`+`、`-`）
 
 **覆盖率**: 4/4 (100%)
 
 ---
 
-## 9. Markdown 代码围栏解析器（`parser/`）
+## 9. 项目边界说明
 
-### ✅ 已实现
-
-#### FenceParser 核心功能
-- ✅ 解析 ` ```lang\n...\n``` ` 格式，提取语言标识符和代码内容
-- ✅ 返回 `FenceBlock(language, code, isClosed)` data class（`public`）
-- ✅ 支持 `` ` `` 反引号围栏（≥ 3 个）
-- ✅ 支持 `~~~` 波浪线围栏（≥ 3 个）
-- ✅ info string 仅取第一个词作为语言标识符
-- ✅ 支持解析 `hl_lines="1 3-5"`，输出为高亮行集合
-- ✅ 支持解析 `startline=42`，输出为代码块起始行号
-
-#### 流式场景支持
-- ✅ 未闭合围栏（流式输出中）仍返回已有内容，不等待闭合符号
-- ✅ `isClosed: Boolean` 字段标识围栏是否已闭合
-- ✅ 有开头无结尾时 `isClosed = false`，渲染层据此决定是否显示光标
-
-#### 语言检测
-- ✅ 无语言标识时启发式语言检测（基于关键词规则）
-- ✅ 检测逻辑封装为 `internal fun detectLanguage(code: String): String`
-- ✅ 检测失败时降级为空字符串（渲染层降级为 `PlainTextLexer`）
-- ✅ 支持识别 `diff`/patch 格式代码块
-
-#### 多围栏支持
-- ✅ 一段文本中多个代码围栏的分段解析
-- ✅ 返回 `List<FenceBlock>`，代码块之间的普通文本不包含在结果中
-
-**覆盖率**: 14/14 (100%)
+- `codehigh` 仅负责代码高亮、代码块渲染与相关主题/增量能力
+- Markdown 解析、围栏提取与 Markdown 渲染职责已移交给独立的 `Markdown` 项目
+- 当前仓库不再维护 Markdown 相关实现；本节仅用于说明项目边界
 
 ---
 
@@ -416,8 +390,6 @@
 - ✅ `LocalCodeTheme` CompositionLocal（外部注入主题）
 - ✅ `Lexer` 接口（外部可注入自定义 Lexer）
 - ✅ `LanguageRegistry.get()` / `register()`（注册表访问入口）
-- ✅ `FenceParser`（Markdown 围栏解析器）
-- ✅ `FenceBlock`（解析结果 data class）
 - ✅ `CodeBlock`（**唯一**渲染入口，含 `isStreaming` 参数，默认支持增量解析）
 - ✅ `InlineCode`（行内代码组件）
 - ✅ 4 套内置主题 object（`OneDarkProTheme`、`GithubLightTheme`、`DraculaProTheme`、`SolarizedLightTheme`）
@@ -429,13 +401,12 @@
 - ✅ `CodeTheme.safeColorFor()`（回退逻辑）
 - ✅ `LanguageRegistry.aliases`（别名映射表）
 - ✅ `registerDefaults()`（模块初始化内部调用）
-- ✅ `detectLanguage()`（启发式检测）
 - ✅ `LineNumberColumn`、`LanguageLabel`、`CopyButton`（UI 子组件）
 - ✅ `buildHighlightedString()`（AnnotatedString 构建）
 - ✅ `StreamingCursor`（光标动画，`CodeBlock` 内部使用）
 - ✅ `IncrementalHighlighter`、`AstDiffEngine`（增量引擎，`CodeBlock` 内部使用）
 
-**覆盖率**: 23/23 (100%)
+**覆盖率**: 20/20 (100%)
 
 ---
 
@@ -514,11 +485,10 @@
 #### 测试覆盖
 - ✅ `KotlinLexerTest`、`JavaLexerTest`、`PythonLexerTest` 等各语言词法分析器单元测试
 - ✅ `CodeThemeTest` 主题系统测试（颜色映射、回退逻辑）
-- ✅ `FenceParserTest` 围栏解析器测试（正常路径、未闭合围栏、多围栏）
 - ✅ `IncrementalHighlighterTest` 增量引擎测试（前缀复用、全量重解析触发条件）
 - ✅ 测试框架：`kotlin.test`，执行命令：`./gradlew :code-high:jvmTest`
 
-**覆盖率**: 9/9 (100%)
+**覆盖率**: 8/8 (100%)
 
 ---
 
@@ -533,15 +503,15 @@
 | 5 | 语言支持 — 脚本语言 | 10/10 | 0/10 | 100% |
 | 6 | 语言支持 — 系统/底层语言 | 3/3 | 0/3 | 100% |
 | 7 | 语言支持 — 数据/配置语言 | 6/6 | 0/6 | 100% |
-| 8 | 语言支持 — 标记/样式语言 | 4/4 | 0/4 | 100% |
-| 9 | Markdown 代码围栏解析器（`parser/`） | 14/14 | 0/14 | 100% |
+| 8 | 语言支持 — 标记/样式/差异语言 | 4/4 | 0/4 | 100% |
+| 9 | 项目边界说明 | - | - | - |
 | 10 | Compose 渲染组件（`renderer/`） | 15/15 | 0/15 | 100% |
 | 11 | 流式增量渲染引擎（`stream/`） | 9/9 | 0/9 | 100% |
-| 12 | 可见性原则（最小对外暴露） | 23/23 | 0/23 | 100% |
+| 12 | 可见性原则（最小对外暴露） | 20/20 | 0/20 | 100% |
 | 13 | 预览演示模块（`code-high-preview`） | 16/16 | 0/16 | 100% |
 | 14 | 多平台支持（KMP） | 5/5 | 0/5 | 100% |
-| 15 | 性能与工程质量 | 9/9 | 0/9 | 100% |
-| | **总计** | **155/155** | **0/155** | **100%** |
+| 15 | 性能与工程质量 | 8/8 | 0/8 | 100% |
+| | **总计** | **138/138** | **0/138** | **100%** |
 
 > **注意**：`StreamingCodeBlock` 已合并入 `CodeBlock`（通过 `isStreaming` 参数控制），不再作为独立公开组件。`CodeBlock` 默认启用增量解析引擎，调用方无需感知内部实现。
 
@@ -570,7 +540,6 @@ androidApp
                     ├── lexer/ → ast/
                     ├── theme/ → ast/
                     ├── renderer/ → ast/, theme/, lexer/
-                    ├── parser/ → ast/
                     └── stream/ → ast/, lexer/
 ```
 
@@ -595,7 +564,6 @@ androidApp
 ### 二、渲染能力扩展
 
 - ✅ 已完成并移动到对应章节：
-  - 围栏解析章节：`hl_lines`、`startline`
   - 渲染组件章节：行高亮、起始行号、Diff 模式
 - 当前渲染扩展方向可继续关注：
   - 代码搜索/过滤
@@ -628,5 +596,4 @@ androidApp
 | [highlight.js 语言列表](https://highlightjs.org/download/) | 主流代码高亮库语言支持参考 | 4-8 |
 | [Shiki 主题系统](https://shiki.style/themes) | TextMate 语法主题规范参考 | 2 |
 | [Tree-sitter](https://tree-sitter.github.io/) | 增量解析引擎设计参考 | 11 |
-| [CommonMark Spec — Fenced Code Blocks](https://spec.commonmark.org/0.31.2/#fenced-code-blocks) | 代码围栏语法规范 | 9 |
 | [Compose Multiplatform](https://www.jetbrains.com/compose-multiplatform/) | 渲染层框架 | 10, 11, 13 |

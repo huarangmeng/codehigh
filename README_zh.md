@@ -13,11 +13,10 @@
 ## 🌟 核心特性
 
 - **多端统一渲染**：使用 Compose Multiplatform 实现 Android、iOS、Desktop (JVM) 和 Web (Wasm/JS) 上一致的代码高亮效果
-- **28+ 编程语言支持**：内置支持 Kotlin、Java、Swift、Python、JavaScript、TypeScript、Ruby、PHP、Dart、Scala、Go、Rust、C、C++、R、SQL、JSON、YAML、TOML、Dockerfile、Bash、Lua、Haskell、Elixir、XML、HTML、CSS、Markdown 等
+- **28+ 编程语言支持**：内置支持 Kotlin、Java、Swift、Python、JavaScript、TypeScript、Ruby、PHP、Dart、Scala、Go、Rust、C、C++、R、SQL、JSON、YAML、TOML、Dockerfile、Bash、Lua、Haskell、Elixir、XML、HTML、CSS、Diff 等
 - **增量高亮**：基于 AST 的增量解析和高亮，适用于流式场景（如 AI 对话、实时编辑）的高效更新
 - **丰富主题**：内置 4 套主题，包括 One Dark Pro、GitHub Light、Dracula Pro 和 Solarized Light，支持自定义主题
 - **完整代码块组件**：完整的代码块渲染，包含行号、起始行号、指定行高亮、Diff 模式、复制按钮、语言标签、可折叠/展开、流式光标动画等功能
-- **Markdown 代码块解析器**：内置 Markdown 代码围栏解析器
 - **自定义词法分析器支持**：可扩展的词法分析器 API，支持添加更多编程语言
 - **Token 点击交互**：单个代码 Token 的点击回调，用于实现交互功能
 - **明暗主题支持**：内置明暗主题，支持显式选择和自定义主题
@@ -67,12 +66,12 @@
 </details>
 
 <details>
-<summary><b>标记/样式语言</b> — Bash、XML、HTML、CSS、Markdown</summary>
+<summary><b>标记/样式/差异语言</b> — Bash、XML、HTML、CSS、Diff</summary>
 
 - **Bash/Shell**：关键字、字符串、注释、变量、命令
 - **XML/HTML**：标签、属性、字符串、注释、实体
 - **CSS**：选择器、属性、值、注释、at-rules
-- **Markdown**：标题、列表、链接、代码段、块引用等
+- **Diff/Patch**：文件头、hunk 标记、增删行和补丁元信息
 </details>
 
 ## 🎨 内置主题 (4 套)
@@ -309,7 +308,7 @@ CodeBlock(
 
 ## 🏗️ 项目结构
 
-- `:codehighlight`：核心 SDK 模块，包含词法分析器、解析器、渲染器、主题和增量高亮。
+- `:codehighlight`：核心 SDK 模块，包含词法分析器、渲染器、主题和增量高亮。
 - `:codehighlight-preview`：预览组件和示例数据集。
 - `:composeApp`：跨平台演示应用。
 - `:androidApp`：Android 演示应用。
@@ -336,6 +335,7 @@ CodeBlock(
 
 ## 💡 推荐项目
 
+- [Markdown](https://github.com/huarangmeng/Markdown) — 由同一作者开发的 Kotlin Multiplatform Markdown 解析与渲染库。如果你需要 Markdown 解析或渲染能力，请与 `codehigh` 搭配使用。
 - [LaTeX](https://github.com/huarangmeng/LaTeX) — 由同一作者开发的 Kotlin Multiplatform LaTeX 解析和渲染库。如果你的项目同时需要代码高亮和 LaTeX 渲染，不妨看看！
 
 ## 📄 许可证

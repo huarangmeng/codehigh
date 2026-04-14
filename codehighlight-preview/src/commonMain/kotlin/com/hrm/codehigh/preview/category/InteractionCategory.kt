@@ -169,7 +169,7 @@ internal fun InteractionCategory() {
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text("默认样式现在试用你给的这套配色：日间模式是 #F5F7FA 底、#2E3440 字，夜间模式是 #2A2F3A 底、#ECEFF4 字，并补上一圈 1dp 细边框。")
+                    Text("默认样式遵循当前的 InlineCodeStyle 协议：亮色主题使用 #F6F8FA 背景和 #D0D7DE 的 1dp 边框，暗色主题使用 #30363D 背景和 #3D444D 的 1dp 边框，文字继续沿用主题的普通代码色。")
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -178,7 +178,7 @@ internal fun InteractionCategory() {
                         InlineCode(text = "README.md")
                         Text("和")
                         InlineCode(text = "draft")
-                        Text("会更接近中性色标签，观感更干净，也更容易融入正文。")
+                        Text("会沿用统一的默认标签风格，并和主题中的普通代码文字颜色保持一致。")
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -190,9 +190,9 @@ internal fun InteractionCategory() {
                         InlineCode(text = "git add .")
                         Text("与")
                         InlineCode(text = "git commit")
-                        Text("现在会更偏克制、清爽的默认风格，而不是带明显情绪色的标签。")
+                        Text("会共享同一套背景、边框和文字色规则，适合直接嵌入正文或说明文本。")
                     }
-                    Text("也可以继续通过一个 style 统一控制字号、留白与测量结果：")
+                    Text("也可以继续通过一个 style 统一控制字号、留白、边框和测量结果：")
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
