@@ -14,12 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -105,7 +105,7 @@ fun CodeBlock(
     val codeLineHeightDp = with(density) { codeLineHeight.toDp() }
     val lineNumberStyle = remember(theme) {
         TextStyle(
-            color = theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT).copy(alpha = 0.5f),
+            color = theme.colorFor(TokenType.COMMENT).copy(alpha = 0.5f),
             fontSize = 13.sp,
             fontFamily = FontFamily.Monospace,
             lineHeight = codeLineHeight,
@@ -127,21 +127,23 @@ fun CodeBlock(
             .fillMaxWidth()
     ) {
         if (showToolbar) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                CodeBlockHeaderLabels(
-                    title = title,
-                    language = language,
-                    theme = theme,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-                if (showCopyButton) {
-                    CopyButton(code = code, theme = theme)
+            DisableSelection {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CodeBlockHeaderLabels(
+                        title = title,
+                        language = language,
+                        theme = theme,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    if (showCopyButton) {
+                        CopyButton(code = code, theme = theme)
+                    }
                 }
             }
         }
@@ -181,23 +183,25 @@ fun CodeBlock(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (showLineNumbers) {
-                                BasicText(
-                                    text = (startLine + index).toString(),
-                                    style = lineNumberStyle,
-                                    modifier = Modifier
-                                        .width(40.dp)
-                                        .padding(end = 8.dp),
-                                    maxLines = 1
-                                )
-                                Box(
-                                    modifier = Modifier
-                                        .width(1.dp)
-                                        .height(codeLineHeightDp)
-                                        .background(
-                                            theme.colorFor(com.hrm.codehigh.ast.TokenType.COMMENT)
-                                                .copy(alpha = 0.3f)
-                                        )
-                                )
+                                DisableSelection {
+                                    BasicText(
+                                        text = (startLine + index).toString(),
+                                        style = lineNumberStyle,
+                                        modifier = Modifier
+                                            .width(40.dp)
+                                            .padding(end = 8.dp),
+                                        maxLines = 1
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .width(1.dp)
+                                            .height(codeLineHeightDp)
+                                            .background(
+                                                theme.colorFor(TokenType.COMMENT)
+                                                    .copy(alpha = 0.3f)
+                                            )
+                                    )
+                                }
                             }
 
                             Row(
@@ -225,7 +229,7 @@ fun CodeBlock(
                                 if (isLastLine) {
                                     StreamingCursor(
                                         isStreaming = isStreaming,
-                                        color = theme.colorFor(com.hrm.codehigh.ast.TokenType.PLAIN)
+                                        color = theme.colorFor(TokenType.PLAIN)
                                     )
                                 }
                             }
@@ -237,17 +241,19 @@ fun CodeBlock(
 
         // 折叠/展开按钮
         if (isCollapsible) {
-            BasicText(
-                text = if (isExpanded) Strings.collapse() else Strings.expand(totalLines - visibleLineCount),
-                style = TextStyle(
-                    color = theme.colorFor(com.hrm.codehigh.ast.TokenType.FUNCTION),
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily.Monospace
-                ),
-                modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-                    .clickable { isExpanded = !isExpanded }
-            )
+            DisableSelection {
+                BasicText(
+                    text = if (isExpanded) Strings.collapse() else Strings.expand(totalLines - visibleLineCount),
+                    style = TextStyle(
+                        color = theme.colorFor(TokenType.FUNCTION),
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                        .clickable { isExpanded = !isExpanded }
+                )
+            }
         }
     }
 }
@@ -273,13 +279,13 @@ private fun CodeTheme.diffMarkerColorForLine(kind: CodeLineKind) = when (kind) {
     CodeLineKind.DIFF_REMOVED -> if (isDark) androidx.compose.ui.graphics.Color(0xFFFFA8B5) else androidx.compose.ui.graphics.Color(0xFFB42318)
     CodeLineKind.DIFF_META_HEADER -> if (isDark) androidx.compose.ui.graphics.Color(0xFFD1D5DB) else androidx.compose.ui.graphics.Color(0xFF4B5563)
     CodeLineKind.DIFF_META_HUNK -> if (isDark) androidx.compose.ui.graphics.Color(0xFF9CDCFE) else androidx.compose.ui.graphics.Color(0xFF0958D9)
-    else -> colorFor(com.hrm.codehigh.ast.TokenType.PLAIN)
+    else -> colorFor(TokenType.PLAIN)
 }
 
 private fun CodeTheme.textColorForLine(kind: CodeLineKind) = when (kind) {
     CodeLineKind.DIFF_META_HEADER -> if (isDark) androidx.compose.ui.graphics.Color(0xFFE5E7EB) else androidx.compose.ui.graphics.Color(0xFF374151)
     CodeLineKind.DIFF_META_HUNK -> if (isDark) androidx.compose.ui.graphics.Color(0xFFBFE3FF) else androidx.compose.ui.graphics.Color(0xFF0B4F8A)
-    else -> colorFor(com.hrm.codehigh.ast.TokenType.PLAIN)
+    else -> colorFor(TokenType.PLAIN)
 }
 
 private fun CodeTheme.fontWeightForLine(kind: CodeLineKind) = when (kind) {
@@ -323,19 +329,21 @@ internal fun CopyButton(
         }
     }
 
-    BasicText(
-        text = if (copied) "✓ ${Strings.copied()}" else Strings.copy(),
-        style = TextStyle(
-            color = theme.colorFor(TokenType.FUNCTION).copy(alpha = 0.8f),
-            fontSize = 11.sp,
-            fontFamily = FontFamily.Monospace
-        ),
-        modifier = Modifier
-            .padding(4.dp)
-            .clickable {
-                @Suppress("DEPRECATION")
-                clipboardManager.setText(AnnotatedString(code))
-                copied = true
-            }
-    )
+    DisableSelection {
+        BasicText(
+            text = if (copied) "✓ ${Strings.copied()}" else Strings.copy(),
+            style = TextStyle(
+                color = theme.colorFor(TokenType.FUNCTION).copy(alpha = 0.8f),
+                fontSize = 11.sp,
+                fontFamily = FontFamily.Monospace
+            ),
+            modifier = Modifier
+                .padding(4.dp)
+                .clickable {
+                    @Suppress("DEPRECATION")
+                    clipboardManager.setText(AnnotatedString(code))
+                    copied = true
+                }
+        )
+    }
 }
