@@ -20,7 +20,6 @@ data class InlineCodeSize(
 
 fun measureInlineCodeSize(
     text: String,
-    language: String = "",
     style: InlineCodeStyle,
     density: Density,
     textMeasurer: androidx.compose.ui.text.TextMeasurer,
@@ -51,10 +50,10 @@ internal fun measureAnnotatedStringSize(
     with(density) {
         val horizontalPaddingPx =
             contentPadding.calculateLeftPadding(LayoutDirection.Ltr).toPx() +
-                contentPadding.calculateRightPadding(LayoutDirection.Ltr).toPx()
+                    contentPadding.calculateRightPadding(LayoutDirection.Ltr).toPx()
         val verticalPaddingPx =
             contentPadding.calculateTopPadding().toPx() +
-                contentPadding.calculateBottomPadding().toPx()
+                    contentPadding.calculateBottomPadding().toPx()
         val horizontalBorderPx = borderWidth.toPx() * 2f
         val verticalBorderPx = borderWidth.toPx() * 2f
         val horizontalDecorationPx = horizontalPaddingPx + horizontalBorderPx
@@ -62,13 +61,14 @@ internal fun measureAnnotatedStringSize(
 
         val maxWidthWithoutDecoration = maxWidth - horizontalDecorationPx
 
-        val constraints = if (maxWidthWithoutDecoration.isFinite() && maxWidthWithoutDecoration > 0) {
-            androidx.compose.ui.unit.Constraints(
-                maxWidth = maxWidthWithoutDecoration.toInt(),
-            )
-        } else {
-            androidx.compose.ui.unit.Constraints()
-        }
+        val constraints =
+            if (maxWidthWithoutDecoration.isFinite() && maxWidthWithoutDecoration > 0) {
+                androidx.compose.ui.unit.Constraints(
+                    maxWidth = maxWidthWithoutDecoration.toInt(),
+                )
+            } else {
+                androidx.compose.ui.unit.Constraints()
+            }
 
         val layoutResult = textMeasurer.measure(
             text = annotatedString,

@@ -25,28 +25,6 @@ internal data class CodeLineRender(
     val kind: CodeLineKind
 )
 
-/**
- * 将 Token 列表按行拆分，返回每行对应的高亮 AnnotatedString 列表。
- * 行数与 [sourceLines] 严格对应，保证行号与代码行完全对齐。
- * 标记为 internal，仅供渲染层内部使用。
- *
- * @param sourceLines 原始代码按行拆分的列表
- * @param tokens Token 列表（跨行 token 会被正确拆分）
- * @param theme 代码主题
- * @return 每行对应的 AnnotatedString 列表，长度与 sourceLines 相同
- */
-internal fun buildLineHighlights(
-    sourceLines: List<String>,
-    tokens: List<CodeToken>,
-    theme: CodeTheme
-): List<AnnotatedString> {
-    return buildLineRenders(
-        sourceLines = sourceLines,
-        tokens = tokens,
-        theme = theme
-    ).map { it.text }
-}
-
 internal fun buildLineRenders(
     sourceLines: List<String>,
     tokens: List<CodeToken>,
@@ -88,7 +66,7 @@ internal fun buildLineRendersFromOffset(
         val lineLen = visibleSourceLines[i].length
         val end = (offset + lineLen).coerceAtMost(full.length)
         result.add(
-            if (offset <= full.length) full.subSequence(offset, end) as AnnotatedString
+            if (offset <= full.length) full.subSequence(offset, end)
             else AnnotatedString("")
         )
         // 跳过换行符（\n 占 1 个字符）
@@ -136,7 +114,7 @@ private fun List<CodeToken>.toRelativeTokens(startCharOffset: Int): List<CodeTok
  * @param theme 代码主题
  * @return 带颜色 Span 的 AnnotatedString
  */
-public fun buildHighlightedString(
+fun buildHighlightedString(
     tokens: List<CodeToken>,
     theme: CodeTheme
 ): AnnotatedString {
@@ -173,7 +151,10 @@ internal fun resolveLineKind(
     if (language.lowercase() == "diff") {
         return when {
             lineText.startsWith("@@") -> CodeLineKind.DIFF_META_HUNK
-            lineText.startsWith("diff ") || lineText.startsWith("index ") || lineText.startsWith("+++") || lineText.startsWith("---") -> CodeLineKind.DIFF_META_HEADER
+            lineText.startsWith("diff ") || lineText.startsWith("index ") || lineText.startsWith("+++") || lineText.startsWith(
+                "---"
+            ) -> CodeLineKind.DIFF_META_HEADER
+
             lineText.startsWith("+") -> CodeLineKind.DIFF_ADDED
             lineText.startsWith("-") -> CodeLineKind.DIFF_REMOVED
             else -> CodeLineKind.NORMAL

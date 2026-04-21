@@ -8,7 +8,7 @@ package com.hrm.codehigh.ast
  * @param text Token 原始文本
  * @param range Token 在原始字符串中的位置范围
  */
-public data class CodeToken(
+data class CodeToken(
     val type: TokenType,
     val text: String,
     val range: IntRange

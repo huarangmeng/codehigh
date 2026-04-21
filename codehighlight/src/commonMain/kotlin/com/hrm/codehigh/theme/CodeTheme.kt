@@ -37,7 +37,7 @@ interface CodeTheme {
 internal fun CodeTheme.safeColorFor(type: TokenType): Color {
     return try {
         colorFor(type)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         colorFor(TokenType.PLAIN)
     }
 }
