@@ -91,8 +91,12 @@ internal class IncrementalHighlighter {
         val oldCode = oldAst.source
         val appendedStart = oldCode.length
         val tokenStart = determineReparseStart(oldAst, appendedStart)
-        val lineStart = oldCode.lastIndexOf('\n', (tokenStart - 1).coerceAtLeast(0)).let { if (it == -1) 0 else it + 1 }
-        val reparseStart = lineStart
+        // IMPORTANT:
+        // Do NOT force reparseStart to a line boundary. If we move backward to the line start,
+        // we might end up *inside* a previously tokenized multi-line token (e.g. block comment),
+        // then the "stable prefix" will drop that token and the dirty lexer will see "*/" etc.
+        // Re-lexing from a token boundary keeps tokenization consistent while still being cheap.
+        val reparseStart = tokenStart
         val stableTokens = oldAst.tokens.takeWhile { it.range.last < reparseStart }
 
         val dirtyCode = newCode.substring(reparseStart)

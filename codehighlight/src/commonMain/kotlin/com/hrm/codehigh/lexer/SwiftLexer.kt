@@ -52,7 +52,11 @@ internal object SwiftLexer : BaseLexer() {
                 val start = pos
                 pos += 2
                 while (pos + 1 < code.length && !(code[pos] == '*' && code[pos + 1] == '/')) pos++
-                if (pos + 1 < code.length) pos += 2
+                if (pos + 1 < code.length) {
+                    pos += 2
+                } else {
+                    pos = code.length
+                }
                 tokens.add(CodeToken(TokenType.COMMENT, code.substring(start, pos), start until pos))
                 continue
             }
@@ -71,7 +75,11 @@ internal object SwiftLexer : BaseLexer() {
                 val start = pos
                 pos += 3
                 while (pos + 2 < code.length && !(code[pos] == '"' && code[pos + 1] == '"' && code[pos + 2] == '"')) pos++
-                if (pos + 2 < code.length) pos += 3
+                if (pos + 2 < code.length) {
+                    pos += 3
+                } else {
+                    pos = code.length
+                }
                 tokens.add(CodeToken(TokenType.STRING, code.substring(start, pos), start until pos))
                 continue
             }

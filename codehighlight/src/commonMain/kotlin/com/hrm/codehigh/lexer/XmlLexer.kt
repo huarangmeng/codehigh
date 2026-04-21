@@ -37,7 +37,11 @@ private fun tokenizeXml(code: String, isHtml: Boolean): List<CodeToken> {
             val start = pos
             pos += 4
             while (pos + 2 < code.length && !code.startsWith("-->", pos)) pos++
-            if (pos + 2 < code.length) pos += 3
+            if (pos + 2 < code.length) {
+                pos += 3
+            } else {
+                pos = code.length
+            }
             tokens.add(CodeToken(TokenType.COMMENT, code.substring(start, pos), start until pos))
             continue
         }
@@ -47,7 +51,11 @@ private fun tokenizeXml(code: String, isHtml: Boolean): List<CodeToken> {
             val start = pos
             pos += 9
             while (pos + 2 < code.length && !code.startsWith("]]>", pos)) pos++
-            if (pos + 2 < code.length) pos += 3
+            if (pos + 2 < code.length) {
+                pos += 3
+            } else {
+                pos = code.length
+            }
             tokens.add(CodeToken(TokenType.STRING, code.substring(start, pos), start until pos))
             continue
         }
@@ -66,7 +74,11 @@ private fun tokenizeXml(code: String, isHtml: Boolean): List<CodeToken> {
             val start = pos
             pos += 2
             while (pos + 1 < code.length && !code.startsWith("?>", pos)) pos++
-            if (pos + 1 < code.length) pos += 2
+            if (pos + 1 < code.length) {
+                pos += 2
+            } else {
+                pos = code.length
+            }
             tokens.add(CodeToken(TokenType.ANNOTATION, code.substring(start, pos), start until pos))
             continue
         }

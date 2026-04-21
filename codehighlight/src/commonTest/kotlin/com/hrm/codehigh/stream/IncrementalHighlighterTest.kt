@@ -8,6 +8,25 @@ import kotlin.test.assertTrue
 
 class IncrementalHighlighterTest {
 
+    private val streamingSample = """
+        package com.example
+
+        import androidx.compose.runtime.Composable
+        import androidx.compose.material3.Text
+
+        /**
+         * 示例 Kotlin 代码，展示主要 Token 类型。
+         */
+        @Composable
+        fun Greeting(name: String) {
+            // 单行注释
+            val message = "Hello, ${'$'}{name}!"
+            val count: Int = 42
+            val hex = 0xFF
+            println(message)
+        }
+    """.trimIndent()
+
     @Test
     fun should_returnAst_when_firstParse() {
         val highlighter = IncrementalHighlighter()
@@ -87,6 +106,22 @@ class IncrementalHighlighterTest {
         val ast = highlighter.update(code, "kotlin")
         val reconstructed = ast.tokens.joinToString("") { it.text }
         assertEquals(code, reconstructed)
+    }
+
+    @Test
+    fun should_coverAllCharacters_during_characterByCharacterStreaming() {
+        val highlighter = IncrementalHighlighter()
+
+        for (index in streamingSample.indices) {
+            val partialCode = streamingSample.substring(0, index + 1)
+            val ast = highlighter.update(partialCode, "kotlin")
+            val reconstructed = ast.tokens.joinToString("") { it.text }
+            assertEquals(
+                partialCode,
+                reconstructed,
+                "Token reconstruction mismatch at length ${index + 1}"
+            )
+        }
     }
 
     @Test

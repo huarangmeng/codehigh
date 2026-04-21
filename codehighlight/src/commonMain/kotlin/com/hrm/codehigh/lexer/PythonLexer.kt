@@ -59,7 +59,11 @@ internal object PythonLexer : BaseLexer() {
                 val start = pos
                 pos += 3
                 while (pos + 2 < code.length && !(code[pos] == '"' && code[pos + 1] == '"' && code[pos + 2] == '"')) pos++
-                if (pos + 2 < code.length) pos += 3
+            if (pos + 2 < code.length) {
+                pos += 3
+            } else {
+                pos = code.length
+            }
                 tokens.add(CodeToken(TokenType.STRING, code.substring(start, pos), start until pos))
                 continue
             }
@@ -69,7 +73,11 @@ internal object PythonLexer : BaseLexer() {
                 val start = pos
                 pos += 3
                 while (pos + 2 < code.length && !(code[pos] == '\'' && code[pos + 1] == '\'' && code[pos + 2] == '\'')) pos++
-                if (pos + 2 < code.length) pos += 3
+            if (pos + 2 < code.length) {
+                pos += 3
+            } else {
+                pos = code.length
+            }
                 tokens.add(CodeToken(TokenType.STRING, code.substring(start, pos), start until pos))
                 continue
             }

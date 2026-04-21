@@ -45,7 +45,11 @@ internal object GoLexer : BaseLexer() {
                 val start = pos
                 pos += 2
                 while (pos + 1 < code.length && !(code[pos] == '*' && code[pos + 1] == '/')) pos++
-                if (pos + 1 < code.length) pos += 2
+                if (pos + 1 < code.length) {
+                    pos += 2
+                } else {
+                    pos = code.length
+                }
                 tokens.add(CodeToken(TokenType.COMMENT, code.substring(start, pos), start until pos))
                 continue
             }
