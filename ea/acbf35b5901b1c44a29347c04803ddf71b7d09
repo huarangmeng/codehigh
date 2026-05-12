@@ -1,0 +1,40 @@
+README.md
+  104eb710096e7049 106
+README_zh.md
+  be2b7ba2ffefb830 115
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "eaacbf35b5901b1c44a29347c04803ddf71b7d09",
+  "prompts": {
+    "104eb710096e7049": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-37880c42-2aa5-457f-a8c4-b281775bca2a",
+        "model": "default"
+      },
+      "human_author": "huarangmeng <844707746@qq.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "be2b7ba2ffefb830": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-0f477495-07ff-4db4-b576-c4de3766fc12",
+        "model": "default"
+      },
+      "human_author": "huarangmeng <844707746@qq.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
