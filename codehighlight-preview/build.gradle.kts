@@ -50,7 +50,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.codehighlight)
+            implementation(projects.codehighlightRender)
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

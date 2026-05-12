@@ -2,7 +2,7 @@
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg)](https://kotlinlang.org)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.10.0-brightgreen.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.huarangmeng/codehighlight.svg?color=orange&label=Maven%20Central)](https://central.sonatype.com/search?q=io.github.huarangmeng%3Acodehighlight)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.huarangmeng/codehighlight-render.svg?color=orange&label=Maven%20Central)](https://central.sonatype.com/search?q=io.github.huarangmeng%3Acodehighlight-render)
 [![Android API](https://img.shields.io/badge/Android%20API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -91,17 +91,19 @@
 
 ```toml
 [versions]
-codehigh = "1.0.1"
+codehigh = "1.1.0"
 
 [libraries]
-codehigh = { module = "io.github.huarangmeng:codehighlight", version.ref = "codehigh" }
+codehigh-render = { module = "io.github.huarangmeng:codehighlight-render", version.ref = "codehigh" }
+codehigh-parser = { module = "io.github.huarangmeng:codehighlight-parser", version.ref = "codehigh" }
 ```
 
 然后在模块的 `build.gradle.kts` 中引入：
 
 ```kotlin
 dependencies {
-    implementation(libs.codehigh)
+    implementation(libs.codehigh.render)
+    implementation(libs.codehigh.parser)
 }
 ```
 
@@ -109,9 +111,12 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("io.github.huarangmeng:codehighlight:1.0.1")
+    implementation("io.github.huarangmeng:codehighlight-render:1.1.0")
+    implementation("io.github.huarangmeng:codehighlight-parser:1.1.0")
 }
 ```
+
+如果只需要分词、语言注册或增量解析能力，不需要 Compose 渲染，可直接依赖 `codehighlight-parser`。
 
 ## 🛠️ 使用说明
 
@@ -308,7 +313,8 @@ CodeBlock(
 
 ## 🏗️ 项目结构
 
-- `:codehighlight`：核心 SDK 模块，包含词法分析器、渲染器、主题和增量高亮。
+- `:codehighlight-parser`：Parser SDK 模块，包含 Token、词法分析器、语言注册和增量解析。
+- `:codehighlight-render`：Compose Render SDK 模块，包含渲染组件、主题和 parser 集成。
 - `:codehighlight-preview`：预览组件和示例数据集。
 - `:composeApp`：跨平台演示应用。
 - `:androidApp`：Android 演示应用。

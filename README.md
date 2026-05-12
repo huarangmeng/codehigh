@@ -2,7 +2,7 @@
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg)](https://kotlinlang.org)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose%20Multiplatform-1.10.0-brightgreen.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.huarangmeng/codehighlight.svg?color=orange&label=Maven%20Central)](https://central.sonatype.com/search?q=io.github.huarangmeng%3Acodehighlight)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.huarangmeng/codehighlight-render.svg?color=orange&label=Maven%20Central)](https://central.sonatype.com/search?q=io.github.huarangmeng%3Acodehighlight-render)
 [![Android API](https://img.shields.io/badge/Android%20API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -91,17 +91,19 @@ Add to your `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
-codehigh = "1.0.1"
+codehigh = "1.1.0"
 
 [libraries]
-codehigh = { module = "io.github.huarangmeng:codehighlight", version.ref = "codehigh" }
+codehigh-render = { module = "io.github.huarangmeng:codehighlight-render", version.ref = "codehigh" }
+codehigh-parser = { module = "io.github.huarangmeng:codehighlight-parser", version.ref = "codehigh" }
 ```
 
 Then add it in your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation(libs.codehigh)
+    implementation(libs.codehigh.render)
+    implementation(libs.codehigh.parser)
 }
 ```
 
@@ -109,9 +111,12 @@ If you do not use Version Catalog, you can add the dependency directly:
 
 ```kotlin
 dependencies {
-    implementation("io.github.huarangmeng:codehighlight:1.0.1")
+    implementation("io.github.huarangmeng:codehighlight-render:1.1.0")
+    implementation("io.github.huarangmeng:codehighlight-parser:1.1.0")
 }
 ```
+
+Use `codehighlight-parser` directly when you only need tokenization, language registration, or incremental parsing without Compose rendering.
 
 ## 🛠️ Usage
 
@@ -308,7 +313,8 @@ CodeBlock(
 
 ## 🏗️ Project Structure
 
-- `:codehighlight`: Core SDK module, containing lexers, renderer, themes, and incremental highlighting.
+- `:codehighlight-parser`: Parser SDK module, containing tokens, lexers, language registration, and incremental parsing.
+- `:codehighlight-render`: Compose render SDK module, containing renderer components, themes, and parser integration.
 - `:codehighlight-preview`: Preview components and sample datasets.
 - `:composeApp`: Cross-platform Demo application.
 - `:androidApp`: Android Demo application.

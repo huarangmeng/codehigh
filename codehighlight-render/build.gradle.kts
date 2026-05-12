@@ -12,7 +12,7 @@ kotlin {
     jvmToolchain(21)
 
     android {
-        namespace = "com.hrm.codehigh"
+        namespace = "com.hrm.codehigh.render"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
         androidResources.enable = true
@@ -31,7 +31,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "CodeHighlight"
+            baseName = "CodeHighlightRender"
             isStatic = true
         }
     }
@@ -51,6 +51,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(projects.codehighlightParser)
+
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -68,13 +70,15 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates("io.github.huarangmeng", "codehighlight", rootProject.property("VERSION").toString())
+    coordinates("io.github.huarangmeng", "codehighlight-render", rootProject.property("VERSION").toString())
 
     pom {
-        name.set("CodeHigh")
-        description.set("""
-            High-performance cross-platform code highlighting library built with Kotlin Multiplatform and Compose Multiplatform.
-        """.trimIndent())
+        name.set("CodeHigh Render")
+        description.set(
+            """
+            Compose Multiplatform rendering layer for CodeHigh, built on codehighlight-parser.
+            """.trimIndent()
+        )
         inceptionYear.set("2026")
         url.set("https://github.com/huarangmeng/codehigh")
         licenses {

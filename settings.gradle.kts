@@ -36,7 +36,8 @@ include(":composeApp")
 include(":androidApp")
 
 // SDK 模块
-include(":codehighlight")
+include(":codehighlight-parser")
+include(":codehighlight-render")
 
 // Preview 模块（仅用于本地预览，不参与sdk打包）
 include(":codehighlight-preview")

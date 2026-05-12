@@ -6,14 +6,14 @@ import com.hrm.codehigh.lexer.LanguageRegistry
 
 /**
  * 增量高亮引擎，用于流式场景下的高效代码高亮更新。
- * 标记为 internal，仅供 CodeBlock 内部使用。
+ * 作为 parser 层的流式解析接口公开，render 层基于该接口消费解析结果。
  *
  * 核心策略：
  * 1. 稳定前缀 Token 直接复用，不重新解析
  * 2. 仅对尾部脏区域（从最后一个受影响 Token 到文本末尾）重新解析
  * 3. 相同代码字符串和语言命中 AST 缓存，直接返回缓存结果
  */
-internal class IncrementalHighlighter {
+class IncrementalHighlighter {
     data class UpdateResult(
         val ast: CodeAst,
         val firstChangedLine: Int,
