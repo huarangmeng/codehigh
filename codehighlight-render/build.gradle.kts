@@ -24,6 +24,12 @@ kotlin {
         }
 
         compilerOptions {}
+
+        // 将 consumer-rules.pro 打包到 AAR，下游开启 R8 时自动生效
+        optimization {
+            consumerKeepRules.publish = true
+            consumerKeepRules.files.add(project.file("consumer-rules.pro"))
+        }
     }
 
     listOf(
