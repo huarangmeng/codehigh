@@ -20,3 +20,14 @@
 
 # Kotlin null 检查 / suspend 函数 / @Metadata 等运行时使用的注解
 -keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations
+
+# -----------------------------------------------------------------------------
+# Compose Desktop / 普通 JVM ProGuard 兼容（仅压制 fatal warning，不阻止 shrink）
+# -----------------------------------------------------------------------------
+# Kotlin 编译器在 `companion object` 中 `private inline fun` + `private val` 组合下
+# 会把私有字段提升到 outer 类的 synthetic 静态字段；某些 Kotlin/KMP 版本组合下，
+# `*$Companion.class` 仍按原名引用 outer 类的字段，被 ProGuard 全图静态校验视为
+# unresolved 并升级为 fatal。运行期 JVM 惰性解析不触发，仅构建期失败。
+# 仅压制对应 warning，不使用 `-keep`，避免阻止下游 shrink。
+-dontwarn com.hrm.codehigh.**
+
