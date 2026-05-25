@@ -1,31 +1,22 @@
-# =============================================================
-# codehighlight-render consumer ProGuard / R8 rules
-# 这些规则会被打包进 AAR，并在依赖方启用 R8/Proguard 时自动生效。
-# 仅保留模块对外公开的渲染 API，避免下游应用混淆 / 收缩时破坏使用方代码。
-# =============================================================
+# =============================================================================
+# codehighlight-render 消费方保留规则（Consumer ProGuard Rules）
+#
+# 该文件随 AAR 一起发布，会在使用本库的 Android 应用进行 R8/ProGuard 优化时自动生效。
+#
+# 编写原则（参考 Android 官方《库作者优化指南》）：
+#  - 仅保留运行时反射 / JNI / 序列化等无法被 R8 静态分析到的入口点。
+#  - 严禁包级 -keep（如 -keep com.hrm.codehigh.** 会导致下游 App 体积膨胀）。
+#  - 严禁全局选项（如 -dontobfuscate / -allowaccessmodification / -ignorewarnings）。
+# =============================================================================
 
-# --- 公开渲染入口（@Composable 顶层函数） ----------------------
-# Compose 顶层 @Composable 函数会被编译成 ComposableSingletons 等辅助类，
-# 这里同时保留同名 *Kt 文件类，保证下游引用不被误删。
--keep public class com.hrm.codehigh.renderer.CodeBlockKt { *; }
--keep public class com.hrm.codehigh.renderer.InlineCodeKt { *; }
--keep public class com.hrm.codehigh.renderer.HighlightedStringKt { *; }
--keep public class com.hrm.codehigh.renderer.InlineCodeMeasurerKt { *; }
+# codehighlight-render 仅提供 Compose 渲染层（CodeBlock / InlineCode / 主题 / 样式），
+# 所有公开 API 均由调用方直接 Kotlin/Compose 调用，未使用反射、JNI、ServiceLoader、
+# 注解处理或运行时序列化，因此无需任何 -keep 规则。
+# 仅显式声明本库对类元数据属性的依赖，避免下游 App 显式禁用这些属性时崩溃。
 
-# --- 公开数据 / 样式类型 --------------------------------------
--keep public class com.hrm.codehigh.renderer.InlineCodeStyle { *; }
--keep public class com.hrm.codehigh.renderer.InlineCodeDefaults { *; }
--keep public class com.hrm.codehigh.renderer.InlineCodeSize { *; }
+# Kotlin / Compose 反射所需的类元数据
+# （Companion / data class / sealed 子类 / 嵌套 lambda / ComposableSingletons$* 等）
+-keepattributes InnerClasses,EnclosingMethod,Signature
 
-# --- 公开主题 API ---------------------------------------------
--keep public interface com.hrm.codehigh.theme.CodeTheme { *; }
--keep public class com.hrm.codehigh.theme.OneDarkProTheme { *; }
--keep public class com.hrm.codehigh.theme.DraculaProTheme { *; }
--keep public class com.hrm.codehigh.theme.GithubLightTheme { *; }
--keep public class com.hrm.codehigh.theme.SolarizedLightTheme { *; }
--keep public class com.hrm.codehigh.theme.LocalCodeThemeKt { *; }
-
-# 抑制 Kotlin / Compose 元数据相关 note，避免下游构建噪声
--dontwarn kotlin.**
--dontwarn kotlinx.**
--dontwarn androidx.compose.**
+# Kotlin null 检查 / suspend 函数 / @Metadata 等运行时使用的注解
+-keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations

@@ -26,6 +26,7 @@ kotlin {
         compilerOptions {}
 
         // 将 consumer-rules.pro 打包到 AAR，下游开启 R8 时自动生效
+        // 仅声明类元数据属性依赖，不锁定任何具体类/成员，对下游 R8 优化零影响
         optimization {
             consumerKeepRules.publish = true
             consumerKeepRules.files.add(project.file("consumer-rules.pro"))

@@ -1,29 +1,22 @@
-# =============================================================
-# codehighlight-parser consumer ProGuard / R8 rules
-# 这些规则会被打包进 AAR，并在依赖方启用 R8/Proguard 时自动生效。
-# 仅保留模块对外公开的 API，避免下游应用混淆 / 收缩时破坏使用方代码。
-# =============================================================
+# =============================================================================
+# codehighlight-parser 消费方保留规则（Consumer ProGuard Rules）
+#
+# 该文件随 AAR 一起发布，会在使用本库的 Android 应用进行 R8/ProGuard 优化时自动生效。
+#
+# 编写原则（参考 Android 官方《库作者优化指南》）：
+#  - 仅保留运行时反射 / JNI / 序列化等无法被 R8 静态分析到的入口点。
+#  - 严禁包级 -keep（如 -keep com.hrm.codehigh.** 会导致下游 App 体积膨胀）。
+#  - 严禁全局选项（如 -dontobfuscate / -allowaccessmodification / -ignorewarnings）。
+# =============================================================================
 
-# --- 公开数据模型与枚举（外部按类名 / 字段名访问） -----------------
--keep public class com.hrm.codehigh.ast.CodeAst { *; }
--keep public class com.hrm.codehigh.ast.CodeToken { *; }
--keep public class com.hrm.codehigh.ast.TokenType { *; }
+# codehighlight-parser 仅提供词法分析与增量解析能力，所有公开 API（Lexer、
+# LanguageRegistry、IncrementalHighlighter、CodeAst/CodeToken/TokenType）均由
+# 调用方直接 Kotlin 调用，未使用反射、JNI、ServiceLoader、注解处理或运行时序列化，
+# 因此无需任何 -keep 规则。
+# 仅显式声明本库对类元数据属性的依赖，避免下游 App 显式禁用这些属性时崩溃。
 
-# 保留 enum 的内置方法，防止下游通过 valueOf / values 反射失败
--keepclassmembers enum com.hrm.codehigh.ast.TokenType {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
+# Kotlin 反射所需的类元数据（Companion / data class / sealed 子类 / enum 等）
+-keepattributes InnerClasses,EnclosingMethod,Signature
 
-# --- 公开词法分析接口与注册表 -----------------------------------
--keep public interface com.hrm.codehigh.lexer.Lexer { *; }
--keep public class com.hrm.codehigh.lexer.LanguageRegistry { *; }
--keep public class com.hrm.codehigh.lexer.LanguageRegistry$* { *; }
-
-# --- 公开增量高亮 API ------------------------------------------
--keep public class com.hrm.codehigh.stream.IncrementalHighlighter { *; }
--keep public class com.hrm.codehigh.stream.IncrementalHighlighter$* { *; }
-
-# 抑制 Kotlin 元数据相关 note，避免下游构建噪声
--dontwarn kotlin.**
--dontwarn kotlinx.**
+# Kotlin null 检查 / suspend 函数 / @Metadata 等运行时使用的注解
+-keepattributes RuntimeVisibleAnnotations,RuntimeVisibleParameterAnnotations
