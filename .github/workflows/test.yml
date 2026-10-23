@@ -1,0 +1,72 @@
+name: Test
+
+on:
+  push:
+    branches: [master, 'feat/**']
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  desktop-tests:
+    name: Desktop tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-14]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 21
+          cache: gradle
+      - name: Prepare Gradle
+        run: chmod +x ./gradlew
+      - name: Run JVM tests
+        run: ./gradlew :codehighlight-parser:jvmTest :codehighlight-render:jvmTest --max-workers=2
+      - name: Run macOS Native tests and verify publication metadata
+        if: runner.os == 'macOS'
+        run: |
+          test "$(uname -m)" = arm64
+          ./gradlew :codehighlight-parser:macosArm64Test :codehighlight-render:macosArm64Test \
+            :codehighlight-parser:generateMetadataFileForKotlinMultiplatformPublication \
+            :codehighlight-render:generateMetadataFileForKotlinMultiplatformPublication \
+            :codehighlight-parser:generateMetadataFileForMacosArm64Publication \
+            :codehighlight-render:generateMetadataFileForMacosArm64Publication \
+            :codehighlight-parser:generatePomFileForMacosArm64Publication \
+            :codehighlight-render:generatePomFileForMacosArm64Publication --max-workers=2
+          python3 -I - <<'PYTEST'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for module in ("codehighlight-parser", "codehighlight-render"):
+              reports = [ET.parse(path).getroot() for path in
+                         Path(module, "build/test-results/macosArm64Test").glob("TEST-*.xml")]
+              if not reports or sum(int(report.get("tests", 0)) for report in reports) == 0:
+                  raise SystemExit(f"No native tests executed: {module}")
+              if any(int(report.get(key, 0)) for report in reports for key in ("failures", "errors", "skipped")):
+                  raise SystemExit(f"Native tests failed or were skipped: {module}")
+              if module == "codehighlight-render":
+                  for name in ("PlatformLocaleTest", "CodeBlockDesktopTest"):
+                      if not any(name in report.get("name", "") and int(report.get("tests", 0)) > 0
+                                 for report in reports):
+                          raise SystemExit(f"Missing native test: {name}")
+          PYTEST
+          for module in codehighlight-parser codehighlight-render; do
+            jq -e 'any(.variants[]; .attributes["org.jetbrains.kotlin.native.target"] == "macos_arm64")' \
+              "$module/build/publications/kotlinMultiplatform/module.json"
+          done
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-test-reports-${{ matrix.os }}
+          path: |
+            codehighlight-parser/build/test-results/**
+            codehighlight-render/build/test-results/**
+            codehighlight-parser/build/reports/tests/**
+            codehighlight-render/build/reports/tests/**
+            codehighlight-parser/build/publications/kotlinMultiplatform/module.json
+            codehighlight-render/build/publications/kotlinMultiplatform/module.json

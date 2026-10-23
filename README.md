@@ -6,13 +6,15 @@
 [![Android API](https://img.shields.io/badge/Android%20API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A high-performance cross-platform code highlighting library developed based on Kotlin Multiplatform (KMP) and Compose Multiplatform. It supports consistent rendering effects on Android, iOS, Desktop (JVM), and Web (Wasm/JS) platforms.
+A high-performance cross-platform code highlighting library developed based on Kotlin Multiplatform (KMP) and Compose Multiplatform. It supports consistent rendering effects on Android, iOS, macOS (Kotlin/Native), Desktop (JVM), and Web (Wasm/JS) platforms.
 
 [中文版本](./README_zh.md)
 
+The library modules expose an experimental `macosArm64` Kotlin/Native target. Native consumers must opt in with `org.jetbrains.compose.experimental.macos.enabled=true`; the demo application remains JVM-based. The macOS CI job runs native tests and checks the Maven variant metadata. This does not add Windows or Linux Native UI targets; those platforms continue to use JVM artifacts.
+
 ## 🌟 Key Features
 
-- **Multi-platform Consistency**: Uses Compose Multiplatform for consistent code highlighting on Android, iOS, Desktop (JVM), and Web (Wasm/JS).
+- **Multi-platform Consistency**: Uses Compose Multiplatform for consistent code highlighting on Android, iOS, macOS (Kotlin/Native), Desktop (JVM), and Web (Wasm/JS).
 - **28+ Programming Languages**: Built-in support for Kotlin, Java, Swift, Python, JavaScript, TypeScript, Ruby, PHP, Dart, Scala, Go, Rust, C, C++, R, SQL, JSON, YAML, TOML, Dockerfile, Bash, Lua, Haskell, Elixir, XML, HTML, CSS, Diff, and more.
 - **Incremental Highlighting**: AST-based incremental parsing and highlighting for efficient updates in streaming scenarios (e.g., AI chat, real-time editing).
 - **Rich Themes**: 4 built-in themes including One Dark Pro, GitHub Light, Dracula Pro, and Solarized Light, with custom theme support.

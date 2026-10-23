@@ -43,6 +43,8 @@ kotlin {
         }
     }
 
+    macosArm64()
+
     jvm()
 
     js {
@@ -68,6 +70,19 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+        }
+        jvmTest {
+            kotlin.srcDir("src/desktopTest/kotlin")
+            dependencies {
+                implementation("org.jetbrains.compose.ui:ui-test:${libs.versions.composeMultiplatform.get()}")
+                implementation(compose.desktop.currentOs)
+            }
+        }
+        macosTest {
+            kotlin.srcDir("src/desktopTest/kotlin")
+            dependencies {
+                implementation("org.jetbrains.compose.ui:ui-test:${libs.versions.composeMultiplatform.get()}")
+            }
         }
     }
 }

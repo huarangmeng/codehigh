@@ -9,7 +9,7 @@ import kotlin.math.max
 internal object Strings {
     /**
      * 获取当前语言代码
-     * 在 JVM/Android 上使用系统语言，其他平台默认英文
+     * JVM/Android 与 Apple 平台读取系统语言，Web 平台读取浏览器语言
      */
     private val languageCode: String by lazy {
         getSystemLanguage()
