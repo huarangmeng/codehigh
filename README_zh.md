@@ -6,13 +6,15 @@
 [![Android API](https://img.shields.io/badge/Android%20API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=24)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-基于 Kotlin Multiplatform (KMP) 和 Compose Multiplatform 开发的高性能跨平台代码高亮库，支持在 Android、iOS、Desktop (JVM) 和 Web (Wasm/JS) 平台上提供一致的渲染效果。
+基于 Kotlin Multiplatform (KMP) 和 Compose Multiplatform 开发的高性能跨平台代码高亮库，支持在 Android、iOS、macOS (Kotlin/Native)、Desktop (JVM) 和 Web (Wasm/JS) 平台上提供一致的渲染效果。
 
 [English Version](./README.md)
 
+库模块新增实验性的 `macosArm64` Kotlin/Native 目标。Native 使用方需要配置 `org.jetbrains.compose.experimental.macos.enabled=true`；示例应用仍使用 JVM。macOS CI 会运行原生测试并检查 Maven 变体元数据。本次不新增 Windows/Linux Native UI 目标，这两个平台继续使用 JVM 构件。
+
 ## 🌟 核心特性
 
-- **多端统一渲染**：使用 Compose Multiplatform 实现 Android、iOS、Desktop (JVM) 和 Web (Wasm/JS) 上一致的代码高亮效果
+- **多端统一渲染**：使用 Compose Multiplatform 实现 Android、iOS、macOS (Kotlin/Native)、Desktop (JVM) 和 Web (Wasm/JS) 上一致的代码高亮效果
 - **28+ 编程语言支持**：内置支持 Kotlin、Java、Swift、Python、JavaScript、TypeScript、Ruby、PHP、Dart、Scala、Go、Rust、C、C++、R、SQL、JSON、YAML、TOML、Dockerfile、Bash、Lua、Haskell、Elixir、XML、HTML、CSS、Diff 等
 - **增量高亮**：基于 AST 的增量解析和高亮，适用于流式场景（如 AI 对话、实时编辑）的高效更新
 - **丰富主题**：内置 4 套主题，包括 One Dark Pro、GitHub Light、Dracula Pro 和 Solarized Light，支持自定义主题
